@@ -36,5 +36,11 @@
     "hooks": {
       "pre-commit": "pretty-quick --staged"
     }
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,json,css,md}": [
+      "eslint --fix src",
+      "git add"
+    ]
   }
 }
