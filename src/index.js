@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from '../src/components/App/App';
-import * as serviceWorker from './serviceWorker';
 
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Login from './components/Auth/Login';
@@ -22,4 +21,3 @@ const Root = () => {
 };
 
 ReactDOM.render(<Root />, document.getElementById('root'));
-serviceWorker.unregister();
