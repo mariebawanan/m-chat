@@ -1,9 +1,9 @@
-import firebase from 'firebase';
+import * as firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/database';
 import 'firebase/storage';
 
-import * as FIREBASE_CONFIG from './config';
+import * as FIREBASE_CONFIG from './firebaseConfig';
 
 const config = {
 	apiKey: FIREBASE_CONFIG.API_KEY,
