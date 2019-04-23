@@ -10,6 +10,7 @@ class Register extends Component {
 		email: '',
 		password: '',
 		passwordConfirmation: '',
+		errors: [],
 	};
 
 	handleInputChange = event => {
@@ -18,19 +19,49 @@ class Register extends Component {
 		});
 	};
 
+	isFormEmpty = ({ username, email, password, passwordConfirmation }) =>
+		!username.length || !email.length || !password.length || !passwordConfirmation.length;
+
+	validatePassword = ({ password, passwordConfirmation }) => {
+		if (password.length < 6) return { message: 'Password must be at least 6 characters' };
+		else if (password !== passwordConfirmation) return { message: 'Passwords do not match' };
+		else return '';
+	};
+
+	isFormValid = () => {
+		let errors = [];
+		let error;
+		if (this.isFormEmpty(this.state)) {
+			error = { message: 'Fill in all fields' };
+			this.setState({ errors: errors.concat(error) });
+			return false;
+		} else {
+			error = this.validatePassword(this.state);
+			if (error) {
+				this.setState({ errors: errors.concat(error) });
+				return false;
+			}
+		}
+		return true;
+	};
+
+	displayErrors = errors => errors.map((error, i) => <p key={i}> {error.message}</p>);
+
 	handleSubmit = event => {
-		event.preventDefault();
-		firebase
-			.auth()
-			.createUserWithEmailAndPassword(this.state.email, this.state.password)
-			.then(createdUser => {
-				console.log(createdUser);
-			})
-			.catch(e => console.error(e.message));
+		if (this.isFormValid()) {
+			event.preventDefault();
+			firebase
+				.auth()
+				.createUserWithEmailAndPassword(this.state.email, this.state.password)
+				.then(createdUser => {
+					console.log(createdUser);
+				})
+				.catch(e => console.error(e.message));
+		}
 	};
 
 	render() {
-		const { email, username, password, passwordConfirmation } = this.state;
+		const { email, username, password, passwordConfirmation, errors } = this.state;
 		return (
 			<Container>
 				<Grid columns={2} centered stackable style={{ height: '100vh' }}>
@@ -94,6 +125,12 @@ class Register extends Component {
 								</Button>
 							</Segment>
 						</Form>
+						{this.state.errors.length > 0 && (
+							<Message error>
+								<h3>Error</h3>
+								{this.displayErrors(errors)}
+							</Message>
+						)}
 						<Message>
 							Already a user? <Link to="login">Log in</Link>
 						</Message>
