@@ -11,6 +11,7 @@ class Register extends Component {
 		password: '',
 		passwordConfirmation: '',
 		errors: [],
+		loading: false,
 	};
 
 	handleInputChange = event => {
@@ -18,6 +19,9 @@ class Register extends Component {
 			[event.target.name]: event.target.value,
 		});
 	};
+
+	handleInputError = (errors, element) =>
+		errors.some(error => error.message.toLowerCase().includes(element)) ? 'error' : '';
 
 	isFormEmpty = ({ username, email, password, passwordConfirmation }) =>
 		!username.length || !email.length || !password.length || !passwordConfirmation.length;
@@ -48,20 +52,25 @@ class Register extends Component {
 	displayErrors = errors => errors.map((error, i) => <p key={i}> {error.message}</p>);
 
 	handleSubmit = event => {
+		event.preventDefault();
 		if (this.isFormValid()) {
-			event.preventDefault();
+			this.setState({ errors: [], loading: true });
 			firebase
 				.auth()
 				.createUserWithEmailAndPassword(this.state.email, this.state.password)
 				.then(createdUser => {
-					console.log(createdUser);
+					this.setState({ loading: false });
 				})
-				.catch(e => console.error(e.message));
+				.catch(e => {
+					let error = { message: e.message };
+					this.setState({ errors: this.state.errors.concat(error) });
+					this.setState({ loading: false });
+				});
 		}
 	};
 
 	render() {
-		const { email, username, password, passwordConfirmation, errors } = this.state;
+		const { email, username, password, passwordConfirmation, errors, loading } = this.state;
 		return (
 			<Container>
 				<Grid columns={2} centered stackable style={{ height: '100vh' }}>
@@ -75,18 +84,6 @@ class Register extends Component {
 								<Form.Input
 									fluid
 									size="big"
-									type="text"
-									name="username"
-									icon="user"
-									iconPosition="left"
-									placeholder="Username"
-									value={username}
-									onChange={this.handleInputChange}
-								/>
-
-								<Form.Input
-									fluid
-									size="big"
 									type="email"
 									name="email"
 									icon="mail"
@@ -94,6 +91,20 @@ class Register extends Component {
 									placeholder="Email Address"
 									value={email}
 									onChange={this.handleInputChange}
+									className={this.handleInputError(errors, 'email')}
+								/>
+
+								<Form.Input
+									fluid
+									size="big"
+									type="text"
+									name="username"
+									icon="user"
+									iconPosition="left"
+									placeholder="Username"
+									value={username}
+									onChange={this.handleInputChange}
+									className={this.handleInputError(errors, 'username')}
 								/>
 
 								<Form.Input
@@ -106,6 +117,7 @@ class Register extends Component {
 									placeholder="Password"
 									value={password}
 									onChange={this.handleInputChange}
+									className={this.handleInputError(errors, 'password')}
 								/>
 
 								<Form.Input
@@ -118,9 +130,15 @@ class Register extends Component {
 									placeholder="Password Confirmation"
 									value={passwordConfirmation}
 									onChange={this.handleInputChange}
+									className={this.handleInputError(errors, 'password')}
 								/>
 
-								<Button color="blue" fluid size="large">
+								<Button
+									className={loading ? 'loading' : ''}
+									disabled={loading}
+									color="blue"
+									fluid
+									size="large">
 									Submit
 								</Button>
 							</Segment>
