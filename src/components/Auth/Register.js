@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Container, Grid, Form, Segment, Button, Header, Message, Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import md5 from 'md5';
 
-import firebase from '../../firebase';
+import { firebase, firebaseUsers } from '../../firebase';
 
 class Register extends Component {
 	state = {
@@ -59,7 +60,24 @@ class Register extends Component {
 				.auth()
 				.createUserWithEmailAndPassword(this.state.email, this.state.password)
 				.then(createdUser => {
-					this.setState({ loading: false });
+					console.log(createdUser);
+					createdUser.user
+						.updateProfile({
+							displayName: this.state.username,
+							photoURL: `http://gravatar.com/avatar/${md5(createdUser.user.email)}?d=identicon`,
+						})
+						.then(() => {
+							// this.setState({ loading: false });
+							this.saveUser(createdUser).then(() => {
+								this.setState({
+									loading: false,
+								});
+							});
+						})
+						.catch(e => {
+							let error = { message: e.message };
+							this.setState({ errors: this.state.errors.concat(error), loading: false });
+						});
 				})
 				.catch(e => {
 					let error = { message: e.message };
@@ -67,6 +85,13 @@ class Register extends Component {
 					this.setState({ loading: false });
 				});
 		}
+	};
+
+	saveUser = createdUser => {
+		return firebaseUsers.child(createdUser.user.uid).set({
+			name: createdUser.user.displayName,
+			avatar: createdUser.user.photoURL,
+		});
 	};
 
 	render() {
