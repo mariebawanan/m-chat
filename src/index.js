@@ -9,6 +9,7 @@ import { setUser } from './actions/index';
 import App from '../src/components/App/App';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
+import Spinner from './Spinner';
 
 import { firebase } from './firebase';
 
@@ -24,7 +25,9 @@ class Root extends Component {
 		});
 	}
 	render() {
-		return (
+		return this.props.loading ? (
+			<Spinner />
+		) : (
 			<Switch>
 				<Route exact path="/login" component={Login} />
 				<Route exact path="/register" component={Register} />
@@ -34,9 +37,13 @@ class Root extends Component {
 	}
 }
 
+const mapStateToProps = state => ({
+	loading: state.user.loading,
+});
+
 const RootWithAuth = withRouter(
 	connect(
-		null,
+		mapStateToProps,
 		{ setUser },
 	)(Root),
 );
