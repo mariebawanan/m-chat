@@ -4,7 +4,7 @@ import { BrowserRouter, Switch, Route, withRouter } from 'react-router-dom';
 
 import { Provider, connect } from 'react-redux';
 import store from './store';
-import { setUser } from './actions/index';
+import { setUser, clearUser } from './actions/index';
 
 import App from '../src/components/App/App';
 import Login from './components/Auth/Login';
@@ -21,6 +21,9 @@ class Root extends Component {
 			if (user) {
 				this.props.setUser(user);
 				this.props.history.push('/');
+			} else {
+				this.props.history.push('/login');
+				this.props.clearUser();
 			}
 		});
 	}
@@ -44,7 +47,7 @@ const mapStateToProps = state => ({
 const RootWithAuth = withRouter(
 	connect(
 		mapStateToProps,
-		{ setUser },
+		{ setUser, clearUser },
 	)(Root),
 );
 
