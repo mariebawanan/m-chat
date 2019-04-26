@@ -1,2 +1,6 @@
+// USER ACTION TYPES
 export const SET_USER = 'SET_USER';
 export const CLEAR_USER = 'CLEAR_USER';
+
+// CHAT ACTION TYPES
+export const SET_CURRENT_CHAT = 'SET_CURRENT_CHAT';

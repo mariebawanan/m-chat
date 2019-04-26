@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Menu, Icon, Modal, Form, Button, Input } from 'semantic-ui-react';
+import { connect } from 'react-redux';
+import { setCurrentChat } from '../../actions/index';
 
-import { firebaseGroupChats } from '../../firebase';
+import { firebaseGroupChats, firebaseUsers } from '../../firebase';
 
 class GroupChats extends Component {
 	state = {
@@ -10,19 +12,40 @@ class GroupChats extends Component {
 		groupChatDetails: '',
 		modal: false,
 		loading: false,
-	};
-
-	addListeners = () => {
-		let groupChatList = [];
-		firebaseGroupChats.on('child_added', snap => {
-			groupChatList.push(snap.val());
-			this.setState({ groupChatList });
-		});
+		initialLoad: true,
+		activeChat: '',
 	};
 
 	componentDidMount() {
 		this.addListeners();
 	}
+
+	componentWillUnmount() {
+		this.removeListeners();
+	}
+
+	addListeners = () => {
+		let groupChatList = [];
+		firebaseGroupChats.on('child_added', snap => {
+			groupChatList.push(snap.val());
+			this.setState({ groupChatList }, () => {
+				this.setDefaultActiveChat();
+			});
+		});
+	};
+
+	removeListeners = () => {
+		firebaseUsers.off();
+	};
+
+	// Set the first group chat as the default active chat during initial load
+	setDefaultActiveChat = () => {
+		if (this.state.initialLoad && this.state.groupChatList.length > 0) {
+			this.props.setCurrentChat(this.state.groupChatList[0]);
+			this.setActiveGroupChat(this.state.groupChatList[0]);
+		}
+		this.setState({ initialLoad: false });
+	};
 
 	closeModal = () => {
 		this.setState({ modal: false });
@@ -36,16 +59,28 @@ class GroupChats extends Component {
 		this.setState({ [event.target.name]: event.target.value });
 	};
 
+	// Returns true if both fields have values
 	isFormValid = ({ groupChatName, groupChatDetails }) => groupChatName && groupChatDetails;
 
+	setActiveGroupChat = groupChat => {
+		this.setState({ activeChat: groupChat.id });
+	};
+
+	// Change the active chat based on selected group chat
+	changeGroup = groupChat => {
+		this.setActiveGroupChat(groupChat);
+		this.props.setCurrentChat(groupChat);
+	};
+
+	// Renders the group chat list
 	displayGroupChatList = groupChatList =>
 		groupChatList.length > 0 &&
 		groupChatList.map(groupChat => (
 			<Menu.Item
 				key={groupChat.id}
-				onClick={console.log(groupChat)}
+				onClick={() => this.changeGroup(groupChat)}
 				name={groupChat.name}
-				style={{ opacity: 0.7 }}>
+				active={groupChat.id === this.state.activeChat}>
 				# {groupChat.name}
 			</Menu.Item>
 		));
@@ -54,6 +89,8 @@ class GroupChats extends Component {
 		this.setState({ loading: true });
 		const { groupChatDetails, groupChatName } = this.state;
 		const { currentUser } = this.props;
+
+		// Obtain key for the new data to be pushed
 		const key = firebaseGroupChats.push().key;
 
 		const chatData = {
@@ -66,6 +103,7 @@ class GroupChats extends Component {
 			},
 		};
 
+		// Update using the key obtained earlier and update with values
 		firebaseGroupChats
 			.child(key)
 			.update(chatData)
@@ -85,6 +123,7 @@ class GroupChats extends Component {
 		const { groupChatList, modal, loading } = this.state;
 		return (
 			<>
+				{/* Header for the group chat section */}
 				<Menu.Menu>
 					<Menu.Item>
 						<span>
@@ -95,6 +134,7 @@ class GroupChats extends Component {
 					{this.displayGroupChatList(groupChatList)}
 				</Menu.Menu>
 
+				{/* Modal for creating a new group chat */}
 				<Modal size="small" open={modal} onClose={this.closeModal}>
 					<Modal.Header>
 						<Icon name="users" /> ADD A GROUP CHAT
@@ -128,4 +168,7 @@ class GroupChats extends Component {
 	}
 }
 
-export default GroupChats;
+export default connect(
+	null,
+	{ setCurrentChat },
+)(GroupChats);

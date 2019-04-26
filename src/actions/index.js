@@ -1,4 +1,4 @@
-import { SET_USER, CLEAR_USER } from './types';
+import { SET_USER, CLEAR_USER, SET_CURRENT_CHAT } from './types';
 
 // User actions
 export const setUser = user => {
@@ -15,6 +15,16 @@ export const clearUser = () => {
 		type: CLEAR_USER,
 		payload: {
 			currentUser: null,
+		},
+	};
+};
+
+// Chat actions
+export const setCurrentChat = groupChat => {
+	return {
+		type: SET_CURRENT_CHAT,
+		payload: {
+			currentChat: groupChat,
 		},
 	};
 };

@@ -8,11 +8,7 @@ class SidePanel extends Component {
 	render() {
 		const { currentUser } = this.props;
 		return (
-			<Menu
-				size="huge"
-				fixed="left"
-				vertical
-				style={{ backgroundColor: '#dfdfdf', fontSize: '1.25rem' }}>
+			<Menu size="huge" fixed="left" vertical color="green" style={{ fontSize: '1.25rem' }}>
 				<Menu.Item>
 					<UserPanel currentUser={currentUser} />
 				</Menu.Item>
