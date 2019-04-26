@@ -5,3 +5,7 @@
 .messageColumn {
 	margin-left: 320px;
 }
+
+.ui.comments .comment .content {
+	line-height: 1.5;
+}

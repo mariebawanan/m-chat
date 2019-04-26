@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu } from 'semantic-ui-react';
+import { Menu, Divider } from 'semantic-ui-react';
 
 import UserPanel from './UserPanel';
 
@@ -11,8 +11,10 @@ class SidePanel extends Component {
 				fixed="left"
 				vertical
 				inverted
-				style={{ backgroundColor: '#000', fontSize: '20px' }}>
-				<UserPanel />
+				style={{ backgroundColor: '#dfdfdf', fontSize: '20px' }}>
+				<Menu.Item>
+					<UserPanel />
+				</Menu.Item>
 			</Menu>
 		);
 	}
