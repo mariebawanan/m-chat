@@ -32,7 +32,8 @@ class UserPanel extends Component {
 							<Comment.Content>
 								<Comment.Author as="a">{user.displayName}</Comment.Author>
 								<Comment.Actions>
-									<Comment.Action>Change avatar</Comment.Action>
+									<Comment.Action>Change avatar </Comment.Action>
+
 									<Comment.Action onClick={this.handleSignOut}>Log out</Comment.Action>
 								</Comment.Actions>
 							</Comment.Content>

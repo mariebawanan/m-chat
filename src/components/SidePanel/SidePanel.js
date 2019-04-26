@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Menu } from 'semantic-ui-react';
 
 import UserPanel from './UserPanel';
+import GroupChats from './GroupChats';
 
 class SidePanel extends Component {
 	render() {
@@ -11,11 +12,11 @@ class SidePanel extends Component {
 				size="huge"
 				fixed="left"
 				vertical
-				inverted
-				style={{ backgroundColor: '#dfdfdf', fontSize: '20px' }}>
+				style={{ backgroundColor: '#dfdfdf', fontSize: '1.25rem' }}>
 				<Menu.Item>
 					<UserPanel currentUser={currentUser} />
 				</Menu.Item>
+				<GroupChats currentUser={currentUser} />
 			</Menu>
 		);
 	}
