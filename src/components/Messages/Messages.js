@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Segment, Feed } from 'semantic-ui-react';
+import { Segment, Button, Container, Grid } from 'semantic-ui-react';
 
 import MessagesHeader from './MessagesHeader';
 import MessageForm from './MessageForm';
+import Message from './Message';
 
 import { firebaseMessages } from '../../firebase';
 
@@ -10,32 +11,46 @@ class Messages extends Component {
 	state = {
 		chat: this.props.currentChat,
 		user: this.props.currentUser,
+		messages: [],
+		messagesLoading: true,
 	};
-	render() {
+
+	componentDidMount() {
 		const { chat, user } = this.state;
+
+		if (chat && user) {
+			this.addListeners(chat.id);
+		}
+	}
+
+	addListeners = chatId => {
+		this.addMessageListener(chatId);
+	};
+
+	addMessageListener = chatId => {
+		let loadedMessages = [];
+		firebaseMessages.child(chatId).on('child_added', snap => {
+			loadedMessages.push(snap.val());
+			this.setState({
+				messages: loadedMessages,
+				messagesLoading: false,
+			});
+		});
+	};
+
+	displayMessages = messages =>
+		messages.length > 0 &&
+		messages.map(message => (
+			<Message key={message.timestamp} message={message} user={this.state.user} />
+		));
+
+	render() {
+		const { chat, user, messages } = this.state;
 		return (
 			<Segment style={{ height: '100vh', paddingBottom: '0px' }}>
 				<MessagesHeader />
-				<Segment className="messagesPanel">
-					<Feed>
-						<Feed.Event>
-							<Feed.Label>
-								<img
-									alt="marie"
-									src="https://react.semantic-ui.com/images/avatar/small/elliot.jpg"
-								/>
-							</Feed.Label>
-							<Feed.Content>
-								<Feed.Summary>
-									<Feed.User>Elliot Fu</Feed.User>
-									<Feed.Date>1 Hour Ago</Feed.Date>
-								</Feed.Summary>
-								<Feed.Extra text>
-									THis is the message, hello to everybody, I hope you are all doing fine
-								</Feed.Extra>
-							</Feed.Content>
-						</Feed.Event>
-					</Feed>
+				<Segment className="messages-panel">
+					<Grid compact>{this.displayMessages(messages)}</Grid>
 				</Segment>
 				<MessageForm chat={chat} currentUser={user} firebaseMessages={firebaseMessages} />
 			</Segment>

@@ -10,7 +10,7 @@ const App = ({ currentUser, currentChat }) => {
 	return (
 		<Grid columns="equal" className="app">
 			<SidePanel key={currentUser && currentUser.id} currentUser={currentUser} />
-			<Grid.Column className="messageColumn">
+			<Grid.Column className="message-column">
 				<Messages
 					key={currentChat && currentChat.id}
 					currentUser={currentUser}

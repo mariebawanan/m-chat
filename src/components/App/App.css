@@ -7,11 +7,12 @@
 	font-size: 1.25rem;
 }
 
-.messageColumn {
+.message-column {
 	margin-left: 305px;
 	padding-bottom: 0px !important;
 }
-.messagesPanel {
+.messages-panel {
+	font-size: 1.5rem;
 	height: 68vh;
 	overflow-y: scroll;
 }

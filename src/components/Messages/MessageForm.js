@@ -51,7 +51,7 @@ class MessageForm extends Component {
 	};
 
 	render() {
-		const { errors } = this.state;
+		const { errors, message, loading } = this.state;
 		return (
 			<Segment>
 				<Input
@@ -61,11 +61,14 @@ class MessageForm extends Component {
 					fluid
 					size="huge"
 					name="message"
+					value={message}
 					className={errors.some(error => error.message.includes('message')) ? 'error' : ''}
 					onChange={this.handleChange}>
-					<Button icon="plus" />
+					<Button icon="plus" disabled={loading} />
 					<Button color="blue" icon="cloud upload" />
+
 					<input />
+
 					<Button color="green" icon labelPosition="left" onClick={this.sendMessage}>
 						<Icon name="send" />
 						SEND
