@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Menu, Divider } from 'semantic-ui-react';
+import { Menu } from 'semantic-ui-react';
 
 import UserPanel from './UserPanel';
 
 class SidePanel extends Component {
 	render() {
+		const { currentUser } = this.props;
 		return (
 			<Menu
 				size="huge"
@@ -13,7 +14,7 @@ class SidePanel extends Component {
 				inverted
 				style={{ backgroundColor: '#dfdfdf', fontSize: '20px' }}>
 				<Menu.Item>
-					<UserPanel />
+					<UserPanel currentUser={currentUser} />
 				</Menu.Item>
 			</Menu>
 		);
