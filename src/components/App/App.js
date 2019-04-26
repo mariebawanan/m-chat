@@ -6,18 +6,23 @@ import { connect } from 'react-redux';
 import SidePanel from '../SidePanel/SidePanel';
 import Messages from '../Messages/Messages';
 
-const App = ({ currentUser }) => {
+const App = ({ currentUser, currentChat }) => {
 	return (
 		<Grid columns="equal" className="app">
-			<SidePanel currentUser={currentUser} />
+			<SidePanel key={currentUser && currentUser.id} currentUser={currentUser} />
 			<Grid.Column className="messageColumn">
-				<Messages />
+				<Messages
+					key={currentChat && currentChat.id}
+					currentUser={currentUser}
+					currentChat={currentChat}
+				/>
 			</Grid.Column>
 		</Grid>
 	);
 };
-const mapStateToProps = ({ user }) => ({
+const mapStateToProps = ({ user, chat }) => ({
 	currentUser: user.currentUser,
+	currentChat: chat.currentChat,
 });
 
 export default connect(mapStateToProps)(App);

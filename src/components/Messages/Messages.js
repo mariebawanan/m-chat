@@ -4,8 +4,15 @@ import { Segment, Feed } from 'semantic-ui-react';
 import MessagesHeader from './MessagesHeader';
 import MessageForm from './MessageForm';
 
+import { firebaseMessages } from '../../firebase';
+
 class Messages extends Component {
+	state = {
+		chat: this.props.currentChat,
+		user: this.props.currentUser,
+	};
 	render() {
+		const { chat, user } = this.state;
 		return (
 			<Segment style={{ height: '100vh', paddingBottom: '0px' }}>
 				<MessagesHeader />
@@ -30,7 +37,7 @@ class Messages extends Component {
 						</Feed.Event>
 					</Feed>
 				</Segment>
-				<MessageForm />
+				<MessageForm chat={chat} currentUser={user} firebaseMessages={firebaseMessages} />
 			</Segment>
 		);
 	}

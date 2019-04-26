@@ -18,5 +18,6 @@ firebase.initializeApp(config);
 const firebaseDB = firebase.database();
 const firebaseUsers = firebaseDB.ref('users');
 const firebaseGroupChats = firebaseDB.ref('groupChats');
+const firebaseMessages = firebaseDB.ref('messages');
 
-export { firebase, firebaseDB, firebaseUsers, firebaseGroupChats };
+export { firebase, firebaseDB, firebaseUsers, firebaseGroupChats, firebaseMessages };
