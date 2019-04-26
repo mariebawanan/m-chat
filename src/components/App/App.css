@@ -1,11 +1,17 @@
 .app {
 	background: #eee;
-}
-
-.messageColumn {
-	margin-left: 320px;
+	padding-bottom: 0px;
 }
 
 .ui.comments .comment .content {
 	font-size: 1.25rem;
+}
+
+.messageColumn {
+	margin-left: 305px;
+	padding-bottom: 0px !important;
+}
+.messagesPanel {
+	height: 68vh;
+	overflow-y: scroll;
 }
