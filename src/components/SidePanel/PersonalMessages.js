@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import { Menu, Icon } from 'semantic-ui-react';
+import { connect } from 'react-redux';
 
 import {
   firebaseUsers,
   firebaseUsersConnect,
   firebaseUserStatus,
 } from '../../firebase';
+import { setCurrentChat, setPrivateChat } from '../../actions/index';
 
 class PersonalMessages extends Component {
   state = {
@@ -78,6 +80,23 @@ class PersonalMessages extends Component {
 
   isUserOnline = user => user['status'] === 'online';
 
+  changeChat = user => {
+    const chatId = this.getChatId(user.uid);
+    const chatData = {
+      id: chatId,
+      name: user.name,
+    };
+    this.props.setCurrentChat(chatData);
+    this.props.setPrivateChat(true);
+  };
+
+  getChatId = userId => {
+    const currentUserId = this.state.user.uid;
+    return userId < currentUserId
+      ? `${userId}/${currentUserId}`
+      : `${currentUserId}/${userId}`;
+  };
+
   render() {
     const { users } = this.state;
     return (
@@ -88,7 +107,7 @@ class PersonalMessages extends Component {
           </span>
         </Menu.Item>
         {users.map(user => (
-          <Menu.Item key={user.uid} onClick={() => console.log(user)}>
+          <Menu.Item key={user.uid} onClick={() => this.changeChat(user)}>
             <Icon
               name="circle"
               color={this.isUserOnline(user) ? 'green' : 'grey'}
@@ -101,4 +120,7 @@ class PersonalMessages extends Component {
   }
 }
 
-export default PersonalMessages;
+export default connect(
+  null,
+  { setCurrentChat, setPrivateChat },
+)(PersonalMessages);
