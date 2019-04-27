@@ -5,12 +5,13 @@ import MessagesHeader from './MessagesHeader';
 import MessageForm from './MessageForm';
 import Message from './Message';
 
-import { firebaseMessages } from '../../firebase';
+import { firebaseMessages, firebasePrivateMessages } from '../../firebase';
 
 class Messages extends Component {
   state = {
     chat: this.props.currentChat,
     user: this.props.currentUser,
+    isPrivateChat: this.props.isPrivateChat,
     messages: [],
     messagesLoading: true,
     searchKeyword: '',
@@ -32,7 +33,8 @@ class Messages extends Component {
 
   addMessageListener = chatId => {
     let loadedMessages = [];
-    firebaseMessages.child(chatId).on('child_added', snap => {
+    const ref = this.getMessagesRef();
+    ref.child(chatId).on('child_added', snap => {
       loadedMessages.push(snap.val());
       this.setState({
         messages: loadedMessages,
@@ -93,6 +95,9 @@ class Messages extends Component {
     );
   };
 
+  getMessagesRef = () =>
+    this.state.isPrivateChat ? firebasePrivateMessages : firebaseMessages;
+
   render() {
     const {
       chat,
@@ -102,10 +107,12 @@ class Messages extends Component {
       searchResults,
       searchKeyword,
       searchLoading,
+      isPrivateChat,
     } = this.state;
     return (
       <Segment style={{ height: '100vh', paddingBottom: '0px' }}>
         <MessagesHeader
+          isPrivateChat={isPrivateChat}
           handleChange={this.handleChange}
           chatName={this.displayChatName(chat)}
           numUniqueUsers={numUniqueUsers}
@@ -119,9 +126,11 @@ class Messages extends Component {
           </Grid>
         </Segment>
         <MessageForm
+          isPrivateChat={isPrivateChat}
           chat={chat}
           currentUser={user}
           firebaseMessages={firebaseMessages}
+          getMessagesRef={this.getMessagesRef}
         />
       </Segment>
     );

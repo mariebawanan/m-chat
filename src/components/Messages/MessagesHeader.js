@@ -8,17 +8,25 @@ class MessagesHeader extends Component {
       numUniqueUsers,
       handleChange,
       searchLoading,
+      isPrivateChat,
     } = this.props;
     return (
       <Segment clearing color="green" inverted>
         <Header inverted as="h2" floated="left">
-          # {chatName}
-          <Header.Subheader>
-            {numUniqueUsers
-              ? `${numUniqueUsers} user${numUniqueUsers > 1 ? 's are' : ' is '}
+          {isPrivateChat ? '' : '# '}
+          {chatName}
+          {isPrivateChat ? (
+            <Header.Subheader>Private chat</Header.Subheader>
+          ) : (
+            <Header.Subheader>
+              {numUniqueUsers
+                ? `${numUniqueUsers} user${
+                    numUniqueUsers > 1 ? 's are' : ' is '
+                  }
 						participating in this chat`
-              : 'no users yet. write a message'}
-          </Header.Subheader>
+                : 'no users yet. write a message'}
+            </Header.Subheader>
+          )}
         </Header>
         {/* Search within the current chat */}
         <Header floated="right">

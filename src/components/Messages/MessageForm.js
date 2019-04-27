@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Input, Button, Icon } from 'semantic-ui-react';
 import uuid from 'uuid/v4';
-import { firebase, firebaseStorage, firebaseMessages } from '../../firebase';
+import { firebase, firebaseStorage } from '../../firebase';
 
 import FileModal from './FileModal';
 import ProgressBar from './ProgressBar';
@@ -43,8 +43,8 @@ class MessageForm extends Component {
     return message;
   };
 
-  sendFileMessage = (fileURL, pathToUpload) => {
-    firebaseMessages
+  sendFileMessage = (fileURL, ref, pathToUpload) => {
+    ref
       .child(pathToUpload)
       .push()
       .set(this.createMessage(fileURL))
@@ -60,9 +60,18 @@ class MessageForm extends Component {
       });
   };
 
+  getPath = () => {
+    if (this.props.isPrivateChat) {
+      return `chat/private-${this.state.chat.id}`;
+    } else {
+      return 'chat/public';
+    }
+  };
+
   uploadFile = (file, metadata) => {
     const pathToUpload = this.state.chat.id;
-    const filepath = `chat/public/${uuid()}.jpg`;
+    const ref = this.props.getMessagesRef();
+    const filepath = `${this.getPath()}/${uuid()}.jpg`;
 
     this.setState(
       {
@@ -89,7 +98,7 @@ class MessageForm extends Component {
             this.state.uploadTask.snapshot.ref
               .getDownloadURL()
               .then(downloadURL => {
-                this.sendFileMessage(downloadURL, pathToUpload);
+                this.sendFileMessage(downloadURL, ref, pathToUpload);
               })
               .catch(error => {
                 this.setState({
@@ -106,9 +115,9 @@ class MessageForm extends Component {
 
   sendMessage = () => {
     const { message, chat, errors } = this.state;
-    const { firebaseMessages } = this.props;
+    const { getMessagesRef } = this.props;
     if (message) {
-      firebaseMessages
+      getMessagesRef()
         .child(chat.id)
         .push()
         .set(this.createMessage())

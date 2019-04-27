@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Menu, Icon, Modal, Form, Button, Input } from 'semantic-ui-react';
 import { connect } from 'react-redux';
-import { setCurrentChat } from '../../actions/index';
+import { setCurrentChat, setPrivateChat } from '../../actions/index';
 
 import { firebaseGroupChats, firebaseUsers } from '../../firebase';
 
@@ -71,6 +71,7 @@ class GroupChats extends Component {
   changeGroup = groupChat => {
     this.setActiveGroupChat(groupChat);
     this.props.setCurrentChat(groupChat);
+    this.props.setPrivateChat(false);
   };
 
   // Renders the group chat list
@@ -189,5 +190,5 @@ class GroupChats extends Component {
 
 export default connect(
   null,
-  { setCurrentChat },
+  { setCurrentChat, setPrivateChat },
 )(GroupChats);

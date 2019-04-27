@@ -11,6 +11,7 @@ import { setCurrentChat, setPrivateChat } from '../../actions/index';
 
 class PersonalMessages extends Component {
   state = {
+    activeChat: '',
     user: this.props.currentUser,
     users: [],
   };
@@ -88,6 +89,13 @@ class PersonalMessages extends Component {
     };
     this.props.setCurrentChat(chatData);
     this.props.setPrivateChat(true);
+    this.setActiveChat(user.uid);
+  };
+
+  setActiveChat = userid => {
+    this.setState({
+      activeChat: userid,
+    });
   };
 
   getChatId = userId => {
@@ -98,7 +106,7 @@ class PersonalMessages extends Component {
   };
 
   render() {
-    const { users } = this.state;
+    const { users, activeChat } = this.state;
     return (
       <Menu.Menu className="messages-list">
         <Menu.Item>
@@ -107,11 +115,15 @@ class PersonalMessages extends Component {
           </span>
         </Menu.Item>
         {users.map(user => (
-          <Menu.Item key={user.uid} onClick={() => this.changeChat(user)}>
+          <Menu.Item
+            key={user.uid}
+            onClick={() => this.changeChat(user)}
+            active={user.uid === activeChat}>
             <Icon
               name="circle"
               color={this.isUserOnline(user) ? 'green' : 'grey'}
             />
+
             {user.name}
           </Menu.Item>
         ))}
