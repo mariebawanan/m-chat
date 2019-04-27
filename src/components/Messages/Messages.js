@@ -8,54 +8,68 @@ import Message from './Message';
 import { firebaseMessages } from '../../firebase';
 
 class Messages extends Component {
-	state = {
-		chat: this.props.currentChat,
-		user: this.props.currentUser,
-		messages: [],
-		messagesLoading: true,
-	};
+  state = {
+    chat: this.props.currentChat,
+    user: this.props.currentUser,
+    messages: [],
+    messagesLoading: true,
+  };
 
-	componentDidMount() {
-		const { chat, user } = this.state;
+  componentDidMount() {
+    const { chat, user } = this.state;
 
-		if (chat && user) {
-			this.addListeners(chat.id);
-		}
-	}
+    if (chat && user) {
+      this.addListeners(chat.id);
+    }
+  }
 
-	addListeners = chatId => {
-		this.addMessageListener(chatId);
-	};
+  addListeners = chatId => {
+    this.addMessageListener(chatId);
+  };
 
-	addMessageListener = chatId => {
-		let loadedMessages = [];
-		firebaseMessages.child(chatId).on('child_added', snap => {
-			loadedMessages.push(snap.val());
-			this.setState({
-				messages: loadedMessages,
-				messagesLoading: false,
-			});
-		});
-	};
+  addMessageListener = chatId => {
+    let loadedMessages = [];
+    firebaseMessages.child(chatId).on('child_added', snap => {
+      loadedMessages.push(snap.val());
+      this.setState({
+        messages: loadedMessages,
+        messagesLoading: false,
+      });
+      this.countUniqueUsers(loadedMessages);
+    });
+  };
 
-	displayMessages = messages =>
-		messages.length > 0 &&
-		messages.map(message => (
-			<Message key={message.timestamp} message={message} user={this.state.user} />
-		));
+  countUniqueUsers = messages => {
+    const uniqueUsers = messages.reduce((acc, message) => {
+      if (!acc.includes(message.user.name)) {
+        acc.push(message.user.name);
+      }
+      return acc;
+    }, []);
 
-	render() {
-		const { chat, user, messages } = this.state;
-		return (
-			<Segment style={{ height: '100vh', paddingBottom: '0px' }}>
-				<MessagesHeader />
-				<Segment className="messages-panel">
-					<Grid compact="true">{this.displayMessages(messages)}</Grid>
-				</Segment>
-				<MessageForm chat={chat} currentUser={user} firebaseMessages={firebaseMessages} />
-			</Segment>
-		);
-	}
+    this.setState({ numUniqueUsers: uniqueUsers.length });
+  };
+
+  displayMessages = messages =>
+    messages.length > 0 &&
+    messages.map(message => (
+      <Message key={message.timestamp} message={message} user={this.state.user} />
+    ));
+
+  displayChatName = chat => (chat ? chat.name : '');
+
+  render() {
+    const { chat, user, messages, numUniqueUsers } = this.state;
+    return (
+      <Segment style={{ height: '100vh', paddingBottom: '0px' }}>
+        <MessagesHeader chatName={this.displayChatName(chat)} numUniqueUsers={numUniqueUsers} />
+        <Segment className="messages-panel">
+          <Grid compact="true">{this.displayMessages(messages)}</Grid>
+        </Segment>
+        <MessageForm chat={chat} currentUser={user} firebaseMessages={firebaseMessages} />
+      </Segment>
+    );
+  }
 }
 
 export default Messages;
