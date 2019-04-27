@@ -14,12 +14,16 @@ class PersonalMessages extends Component {
     activeChat: '',
     user: this.props.currentUser,
     users: [],
+    theme: this.props.theme,
   };
-
   componentDidMount() {
     if (this.state.user) {
       this.addListeners(this.state.user.uid);
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ theme: nextProps.theme });
   }
 
   addListeners = currentUserUid => {
@@ -106,7 +110,7 @@ class PersonalMessages extends Component {
   };
 
   render() {
-    const { users, activeChat } = this.state;
+    const { users, activeChat, theme } = this.state;
     return (
       <Menu.Menu className="messages-list">
         <Menu.Item>
@@ -121,7 +125,7 @@ class PersonalMessages extends Component {
             active={user.uid === activeChat}>
             <Icon
               name="circle"
-              color={this.isUserOnline(user) ? 'green' : 'grey'}
+              color={this.isUserOnline(user) ? `${theme}` : 'grey'}
             />
 
             {user.name}

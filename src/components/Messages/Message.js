@@ -9,7 +9,7 @@ const timeFromNow = timestamp => moment(timestamp).fromNow();
 
 const isImage = message => message.hasOwnProperty('image');
 
-const Message = ({ message, user }) => (
+const Message = ({ message, user, theme }) => (
   <Grid.Row>
     <Grid.Column
       floated={isOwnMessage(message, user) ? 'right' : 'left'}
@@ -25,7 +25,7 @@ const Message = ({ message, user }) => (
             style={{ fontSize: '1.25rem' }}
             className={isOwnMessage(message, user) ? 'own' : ''}>
             <Feed.Summary>
-              <Feed.User>{message.user.name}</Feed.User>
+              <Feed.User as="span">{message.user.name}</Feed.User>
               <Feed.Date>{timeFromNow(message.timestamp)}</Feed.Date>
             </Feed.Summary>
 

@@ -12,6 +12,7 @@ class Messages extends Component {
     chat: this.props.currentChat,
     user: this.props.currentUser,
     isPrivateChat: this.props.isPrivateChat,
+    theme: this.props.theme,
     messages: [],
     messagesLoading: true,
     searchKeyword: '',
@@ -25,6 +26,10 @@ class Messages extends Component {
     if (chat && user) {
       this.addListeners(chat.id);
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ theme: nextProps.theme });
   }
 
   addListeners = chatId => {
@@ -59,6 +64,7 @@ class Messages extends Component {
     messages.length > 0 &&
     messages.map(message => (
       <Message
+        theme={this.state.theme}
         key={message.timestamp}
         message={message}
         user={this.state.user}
@@ -108,10 +114,12 @@ class Messages extends Component {
       searchKeyword,
       searchLoading,
       isPrivateChat,
+      theme,
     } = this.state;
     return (
       <Segment style={{ height: '100vh', paddingBottom: '0px' }}>
         <MessagesHeader
+          theme={theme}
           isPrivateChat={isPrivateChat}
           handleChange={this.handleChange}
           chatName={this.displayChatName(chat)}
@@ -126,6 +134,7 @@ class Messages extends Component {
           </Grid>
         </Segment>
         <MessageForm
+          theme={theme}
           isPrivateChat={isPrivateChat}
           chat={chat}
           currentUser={user}

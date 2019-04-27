@@ -13,6 +13,7 @@ class MessageForm extends Component {
     loading: false,
     chat: this.props.chat,
     user: this.props.currentUser,
+    theme: this.props.theme,
     modal: false,
     uploadState: '',
     uploadTask: null,
@@ -22,6 +23,10 @@ class MessageForm extends Component {
   handleChange = event => {
     this.setState({ [event.target.name]: event.target.value });
   };
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ theme: nextProps.theme });
+  }
 
   createMessage = (fileURL = null) => {
     const message = {
@@ -147,7 +152,14 @@ class MessageForm extends Component {
   };
 
   render() {
-    const { errors, message, modal, uploadState, percentUploaded } = this.state;
+    const {
+      errors,
+      message,
+      modal,
+      uploadState,
+      percentUploaded,
+      theme,
+    } = this.state;
     return (
       <>
         <Input
@@ -167,7 +179,7 @@ class MessageForm extends Component {
           <Button icon="plus" />
           <Button
             disabled={uploadState === 'uploading'}
-            color="blue"
+            color={theme}
             icon="cloud upload"
             onClick={this.openModal}
           />
@@ -175,7 +187,7 @@ class MessageForm extends Component {
           <input />
 
           <Button
-            color="green"
+            color={theme}
             icon
             labelPosition="left"
             onClick={this.sendMessage}>

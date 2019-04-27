@@ -89,12 +89,12 @@ class GroupChats extends Component {
   };
 
   clearNotifications = () => {
-    let index = this.tate.notifications.findIndex(
+    let index = this.state.notifications.findIndex(
       notification => notification.id === this.state.chat.id,
     );
 
     if (index !== -1) {
-      let updatedNotifications = [...this.state.notificqtions];
+      let updatedNotifications = [...this.state.notifications];
       updatedNotifications[index].total = this.state.notifications[
         index
       ].lastKnownTotal;

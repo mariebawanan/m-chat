@@ -9,9 +9,11 @@ class MessagesHeader extends Component {
       handleChange,
       searchLoading,
       isPrivateChat,
+      theme,
     } = this.props;
+
     return (
-      <Segment clearing color="green" inverted>
+      <Segment clearing color={theme} inverted>
         <Header inverted as="h2" floated="left">
           {isPrivateChat ? '' : '# '}
           {chatName}
