@@ -4,6 +4,7 @@ import uuid from 'uuid/v4';
 import { firebase, firebaseStorage, firebaseMessages } from '../../firebase';
 
 import FileModal from './FileModal';
+import ProgressBar from './ProgressBar';
 
 class MessageForm extends Component {
 	state = {
@@ -73,7 +74,6 @@ class MessageForm extends Component {
 					'state_changed',
 					snap => {
 						const percentUploaded = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
-						// this.props.isProgressBarVisible(percentUploaded);
 						this.setState({ percentUploaded });
 					},
 					error => {
@@ -136,9 +136,9 @@ class MessageForm extends Component {
 	};
 
 	render() {
-		const { errors, message, loading, modal } = this.state;
+		const { errors, message, loading, modal, uploadState, percentUploaded } = this.state;
 		return (
-			<Segment>
+			<>
 				<Input
 					type="text"
 					placeholder="Start typing..."
@@ -149,8 +149,13 @@ class MessageForm extends Component {
 					value={message}
 					className={errors.some(error => error.message.includes('message')) ? 'error' : ''}
 					onChange={this.handleChange}>
-					<Button icon="plus" disabled={loading} />
-					<Button color="blue" icon="cloud upload" onClick={this.openModal} />
+					<Button icon="plus" />
+					<Button
+						disabled={uploadState === 'uploading'}
+						color="blue"
+						icon="cloud upload"
+						onClick={this.openModal}
+					/>
 
 					<input />
 
@@ -161,7 +166,12 @@ class MessageForm extends Component {
 
 					<FileModal uploadFile={this.uploadFile} modal={modal} closeModal={this.closeModal} />
 				</Input>
-			</Segment>
+				<ProgressBar
+					uploadState={uploadState}
+					percentUploaded={percentUploaded}
+					attached="bottom"
+				/>
+			</>
 		);
 	}
 }
