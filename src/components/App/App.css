@@ -16,3 +16,11 @@
 	height: 68vh;
 	overflow-y: scroll;
 }
+
+.message-image {
+	padding: 0.5rem;
+}
+
+.own {
+	text-align: right !important;
+}

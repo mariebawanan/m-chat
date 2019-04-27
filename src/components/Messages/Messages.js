@@ -50,7 +50,7 @@ class Messages extends Component {
 			<Segment style={{ height: '100vh', paddingBottom: '0px' }}>
 				<MessagesHeader />
 				<Segment className="messages-panel">
-					<Grid compact>{this.displayMessages(messages)}</Grid>
+					<Grid compact="true">{this.displayMessages(messages)}</Grid>
 				</Segment>
 				<MessageForm chat={chat} currentUser={user} firebaseMessages={firebaseMessages} />
 			</Segment>
