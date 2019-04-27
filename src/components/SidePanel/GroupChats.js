@@ -3,7 +3,11 @@ import { Menu, Icon, Modal, Form, Button, Input } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { setCurrentChat, setPrivateChat } from '../../actions/index';
 
-import { firebaseGroupChats, firebaseUsers } from '../../firebase';
+import {
+  firebaseGroupChats,
+  firebaseUsers,
+  firebaseMessages,
+} from '../../firebase';
 
 class GroupChats extends Component {
   state = {
@@ -14,6 +18,8 @@ class GroupChats extends Component {
     loading: false,
     initialLoad: true,
     activeChat: '',
+    chat: null,
+    notifications: [],
   };
 
   componentDidMount() {
@@ -31,7 +37,47 @@ class GroupChats extends Component {
       this.setState({ groupChatList }, () => {
         this.setDefaultActiveChat();
       });
+      this.addNotification(snap.key);
     });
+  };
+
+  addNotification = chatId => {
+    firebaseMessages.child(chatId).on('value', snap => {
+      if (this.state.chat) {
+        this.showNotification(
+          chatId,
+          this.state.chat.id,
+          this.state.notifications,
+          snap,
+        );
+      }
+    });
+  };
+
+  showNotification = (chatId, currentChat, notifications, snap) => {
+    let lastTotal = 0;
+    let index = notifications.findIndex(
+      notification => notification.id === chatId,
+    );
+
+    if (index !== -1) {
+      if (chatId !== currentChat) {
+        lastTotal = notifications[index].total;
+
+        if (snap.numChildren() - lastTotal > 0) {
+          notifications[index].count = snap.numChildren() - lastTotal;
+        }
+      }
+      notifications[index].lastKnownTotal = snap.numChildren();
+    } else {
+      notifications.push({
+        id: chatId,
+        total: snap.numChildren(),
+        lastKnownTotal: snap.numChildren(),
+        count: 0,
+      });
+    }
+    this.setState({ notifications });
   };
 
   removeListeners = () => {
@@ -72,6 +118,7 @@ class GroupChats extends Component {
     this.setActiveGroupChat(groupChat);
     this.props.setCurrentChat(groupChat);
     this.props.setPrivateChat(false);
+    this.setState({ chat: groupChat });
   };
 
   // Renders the group chat list

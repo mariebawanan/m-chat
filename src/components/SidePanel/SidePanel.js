@@ -14,7 +14,7 @@ class SidePanel extends Component {
         fixed="left"
         vertical
         color="green"
-        style={{ fontSize: '1.25rem' }}>
+        style={{ overflowY: 'scroll', fontSize: '1.25rem' }}>
         <Menu.Item>
           <UserPanel currentUser={currentUser} />
         </Menu.Item>

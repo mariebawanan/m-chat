@@ -22,8 +22,7 @@ class MessagesHeader extends Component {
               {numUniqueUsers
                 ? `${numUniqueUsers} user${
                     numUniqueUsers > 1 ? 's are' : ' is '
-                  }
-						participating in this chat`
+                  } participating in this chat`
                 : 'no users yet. write a message'}
             </Header.Subheader>
           )}
