@@ -5,7 +5,12 @@ import MessagesHeader from './MessagesHeader';
 import MessageForm from './MessageForm';
 import Message from './Message';
 
-import { firebaseMessages, firebasePrivateMessages } from '../../firebase';
+import {
+  firebaseMessages,
+  firebasePrivateMessages,
+  firebaseTypingUsers,
+  firebaseUsersConnect,
+} from '../../firebase';
 
 class Messages extends Component {
   state = {
@@ -18,6 +23,7 @@ class Messages extends Component {
     searchKeyword: '',
     searchLoading: false,
     searchResults: [],
+    typingUsers: [],
   };
 
   componentDidMount() {
@@ -34,7 +40,51 @@ class Messages extends Component {
 
   addListeners = chatId => {
     this.addMessageListener(chatId);
+    this.addTypingListeners(chatId);
   };
+
+  addTypingListeners = chatId => {
+    let typingUsers = [];
+    firebaseTypingUsers.child(chatId).on('child_added', snap => {
+      if (snap.key !== this.state.user.uid) {
+        typingUsers = typingUsers.concat({
+          id: snap.key,
+          name: snap.val(),
+        });
+        this.setState({ typingUsers });
+      }
+    });
+
+    firebaseTypingUsers.child(chatId).on('child_removed', snap => {
+      const index = typingUsers.findIndex(user => user.id === snap.key);
+      if (index !== -1) {
+        typingUsers = typingUsers.filter(user => user.id !== snap.key);
+        this.setState({ typingUsers });
+      }
+    });
+
+    firebaseUsersConnect.on('value', snap => {
+      if (snap.val() === true) {
+        firebaseTypingUsers
+          .child(chatId)
+          .child(this.state.user.uid)
+          .onDisconnect()
+          .remove(error => {
+            if (error !== null) {
+              console.error(error);
+            }
+          });
+      }
+    });
+  };
+
+  displayTypingUsers = users =>
+    users.length > 0 &&
+    users.map(user => (
+      <div>
+        <span style={{ fontStyle: 'italic' }}> {user.name} is typing...</span>
+      </div>
+    ));
 
   addMessageListener = chatId => {
     let loadedMessages = [];
@@ -115,6 +165,7 @@ class Messages extends Component {
       searchLoading,
       isPrivateChat,
       theme,
+      typingUsers,
     } = this.state;
     return (
       <Segment style={{ height: '100vh', paddingBottom: '0px' }}>
@@ -131,6 +182,7 @@ class Messages extends Component {
             {searchKeyword
               ? this.displayMessages(searchResults)
               : this.displayMessages(messages)}
+            {this.displayTypingUsers(typingUsers)}
           </Grid>
         </Segment>
         <MessageForm

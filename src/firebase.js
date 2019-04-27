@@ -23,6 +23,7 @@ const firebaseStorage = firebase.storage().ref();
 const firebaseUsersConnect = firebaseDB.ref('.info/connected');
 const firebaseUserStatus = firebaseDB.ref('status');
 const firebasePrivateMessages = firebaseDB.ref('privateMeesages');
+const firebaseTypingUsers = firebaseDB.ref('typingUsers');
 
 export {
   firebase,
@@ -34,4 +35,5 @@ export {
   firebaseUsersConnect,
   firebaseUserStatus,
   firebasePrivateMessages,
+  firebaseTypingUsers,
 };

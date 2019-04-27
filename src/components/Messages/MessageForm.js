@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Input, Button, Icon } from 'semantic-ui-react';
 import uuid from 'uuid/v4';
-import { firebase, firebaseStorage } from '../../firebase';
+import { firebase, firebaseStorage, firebaseTypingUsers } from '../../firebase';
 
 import FileModal from './FileModal';
 import ProgressBar from './ProgressBar';
@@ -119,7 +119,7 @@ class MessageForm extends Component {
   };
 
   sendMessage = () => {
-    const { message, chat, errors } = this.state;
+    const { message, chat, errors, user } = this.state;
     const { getMessagesRef } = this.props;
     if (message) {
       getMessagesRef()
@@ -128,6 +128,10 @@ class MessageForm extends Component {
         .set(this.createMessage())
         .then(() => {
           this.setState({ loading: false, message: '', errors: [] });
+          firebaseTypingUsers
+            .child(chat.id)
+            .child(user.uid)
+            .remove();
         })
         .catch(error => {
           console.error(error);
@@ -135,6 +139,10 @@ class MessageForm extends Component {
             loading: false,
             errors: errors.concat(error.message),
           });
+          firebaseTypingUsers
+            .child(chat.id)
+            .child(user.uid)
+            .remove();
         });
     } else {
       this.setState({
@@ -149,6 +157,24 @@ class MessageForm extends Component {
 
   closeModal = () => {
     this.setState({ modal: false });
+  };
+
+  handleKeyDown = () => {
+    const { message, chat, user } = this.state;
+
+    if (message.length) {
+      console.log(message);
+      firebaseTypingUsers
+        .child(chat.id)
+        .child(user.uid)
+        .set(user.displayName);
+    } else {
+      console.log('removing');
+      firebaseTypingUsers
+        .child(chat.id)
+        .child(user.uid)
+        .remove();
+    }
   };
 
   render() {
@@ -175,7 +201,8 @@ class MessageForm extends Component {
               ? 'error'
               : ''
           }
-          onChange={this.handleChange}>
+          onChange={this.handleChange}
+          onKeyDown={this.handleKeyDown}>
           <Button icon="plus" />
           <Button
             disabled={uploadState === 'uploading'}

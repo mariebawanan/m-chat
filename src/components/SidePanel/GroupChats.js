@@ -15,6 +15,7 @@ import {
   firebaseGroupChats,
   firebaseUsers,
   firebaseMessages,
+  firebaseTypingUsers,
 } from '../../firebase';
 
 class GroupChats extends Component {
@@ -28,6 +29,7 @@ class GroupChats extends Component {
     activeChat: '',
     chat: null,
     notifications: [],
+    user: this.props.currentUser,
   };
 
   componentDidMount() {
@@ -150,7 +152,12 @@ class GroupChats extends Component {
 
   // Change the active chat based on selected group chat
   changeGroup = groupChat => {
+    const { chat, user } = this.state;
     this.setActiveGroupChat(groupChat);
+    firebaseTypingUsers
+      .child(chat.id)
+      .child(user.uid)
+      .remove();
     this.clearNotifications();
     this.props.setCurrentChat(groupChat);
     this.props.setPrivateChat(false);
