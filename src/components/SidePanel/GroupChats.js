@@ -1,5 +1,13 @@
 import React, { Component } from 'react';
-import { Menu, Icon, Modal, Form, Button, Input } from 'semantic-ui-react';
+import {
+  Menu,
+  Icon,
+  Modal,
+  Form,
+  Button,
+  Input,
+  Label,
+} from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { setCurrentChat, setPrivateChat } from '../../actions/index';
 
@@ -80,6 +88,32 @@ class GroupChats extends Component {
     this.setState({ notifications });
   };
 
+  clearNotifications = () => {
+    let index = this.tate.notifications.findIndex(
+      notification => notification.id === this.state.chat.id,
+    );
+
+    if (index !== -1) {
+      let updatedNotifications = [...this.state.notificqtions];
+      updatedNotifications[index].total = this.state.notifications[
+        index
+      ].lastKnownTotal;
+      updatedNotifications[index].count = 0;
+      this.setState({ notifications: updatedNotifications });
+    }
+  };
+
+  getNotificationsCount = chat => {
+    let count = 0;
+    this.state.notifications.forEach(notification => {
+      if (notification.id === chat.id) {
+        count = notification.counts;
+      }
+    });
+
+    if (count > 0) return count;
+  };
+
   removeListeners = () => {
     firebaseUsers.off();
   };
@@ -89,6 +123,7 @@ class GroupChats extends Component {
     if (this.state.initialLoad && this.state.groupChatList.length > 0) {
       this.props.setCurrentChat(this.state.groupChatList[0]);
       this.setActiveGroupChat(this.state.groupChatList[0]);
+      this.setState({ chat: this.state.groupChatList[0] });
     }
     this.setState({ initialLoad: false });
   };
@@ -116,6 +151,7 @@ class GroupChats extends Component {
   // Change the active chat based on selected group chat
   changeGroup = groupChat => {
     this.setActiveGroupChat(groupChat);
+    this.clearNotifications();
     this.props.setCurrentChat(groupChat);
     this.props.setPrivateChat(false);
     this.setState({ chat: groupChat });
@@ -130,6 +166,9 @@ class GroupChats extends Component {
         onClick={() => this.changeGroup(groupChat)}
         name={groupChat.name}
         active={groupChat.id === this.state.activeChat}>
+        {this.getNotificationsCount(groupChat) && (
+          <Label color="green">{this.getNotificationsCount(groupChat)}</Label>
+        )}
         # {groupChat.name}
       </Menu.Item>
     ));
