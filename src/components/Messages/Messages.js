@@ -13,6 +13,9 @@ class Messages extends Component {
     user: this.props.currentUser,
     messages: [],
     messagesLoading: true,
+    searchKeyword: '',
+    searchLoading: false,
+    searchResults: [],
   };
 
   componentDidMount() {
@@ -58,13 +61,53 @@ class Messages extends Component {
 
   displayChatName = chat => (chat ? chat.name : '');
 
+  searchMessages = () => {
+    const chatMessages = [...this.state.messages];
+    const regex = new RegExp(this.state.searchKeyword, 'gi');
+    const searchResults = chatMessages.reduce((acc, message) => {
+      if ((message.content && message.content.match(regex)) || message.user.name.match(regex))
+        acc.push(message);
+      return acc;
+    }, []);
+    this.setState({ searchResults }, () => {
+      setTimeout(() => this.setState({ searchLoading: false }), 500);
+    });
+  };
+
+  handleChange = event => {
+    this.setState(
+      {
+        searchKeyword: event.target.value,
+        searchLoading: true,
+      },
+      () => {
+        this.searchMessages();
+      },
+    );
+  };
+
   render() {
-    const { chat, user, messages, numUniqueUsers } = this.state;
+    const {
+      chat,
+      user,
+      messages,
+      numUniqueUsers,
+      searchResults,
+      searchKeyword,
+      searchLoading,
+    } = this.state;
     return (
       <Segment style={{ height: '100vh', paddingBottom: '0px' }}>
-        <MessagesHeader chatName={this.displayChatName(chat)} numUniqueUsers={numUniqueUsers} />
+        <MessagesHeader
+          handleChange={this.handleChange}
+          chatName={this.displayChatName(chat)}
+          numUniqueUsers={numUniqueUsers}
+          searchLoading={searchLoading}
+        />
         <Segment className="messages-panel">
-          <Grid compact="true">{this.displayMessages(messages)}</Grid>
+          <Grid compact="true">
+            {searchKeyword ? this.displayMessages(searchResults) : this.displayMessages(messages)}
+          </Grid>
         </Segment>
         <MessageForm chat={chat} currentUser={user} firebaseMessages={firebaseMessages} />
       </Segment>
