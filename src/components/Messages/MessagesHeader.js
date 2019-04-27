@@ -3,7 +3,12 @@ import { Segment, Header, Input } from 'semantic-ui-react';
 
 class MessagesHeader extends Component {
   render() {
-    const { chatName, numUniqueUsers, handleChange, searchLoading } = this.props;
+    const {
+      chatName,
+      numUniqueUsers,
+      handleChange,
+      searchLoading,
+    } = this.props;
     return (
       <Segment clearing color="green" inverted>
         <Header inverted as="h2" floated="left">

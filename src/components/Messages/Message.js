@@ -2,7 +2,8 @@ import React from 'react';
 import { Feed, Image, Grid } from 'semantic-ui-react';
 import moment from 'moment';
 
-const isOwnMessage = (message, user) => (message.user.id === user.uid ? true : false);
+const isOwnMessage = (message, user) =>
+  message.user.id === user.uid ? true : false;
 
 const timeFromNow = timestamp => moment(timestamp).fromNow();
 
@@ -10,7 +11,9 @@ const isImage = message => message.hasOwnProperty('image');
 
 const Message = ({ message, user }) => (
   <Grid.Row>
-    <Grid.Column floated={isOwnMessage(message, user) ? 'right' : 'left'} width={8}>
+    <Grid.Column
+      floated={isOwnMessage(message, user) ? 'right' : 'left'}
+      width={8}>
       <Feed>
         <Feed.Event>
           {!isOwnMessage(message, user) && (

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Input, Button, Icon, Segment } from 'semantic-ui-react';
+import { Input, Button, Icon } from 'semantic-ui-react';
 import uuid from 'uuid/v4';
 import { firebase, firebaseStorage, firebaseMessages } from '../../firebase';
 
@@ -73,7 +73,9 @@ class MessageForm extends Component {
         this.state.uploadTask.on(
           'state_changed',
           snap => {
-            const percentUploaded = Math.round((snap.bytesTransferred / snap.totalBytes) * 100);
+            const percentUploaded = Math.round(
+              (snap.bytesTransferred / snap.totalBytes) * 100,
+            );
             this.setState({ percentUploaded });
           },
           error => {
@@ -147,7 +149,11 @@ class MessageForm extends Component {
           size="huge"
           name="message"
           value={message}
-          className={errors.some(error => error.message.includes('message')) ? 'error' : ''}
+          className={
+            errors.some(error => error.message.includes('message'))
+              ? 'error'
+              : ''
+          }
           onChange={this.handleChange}>
           <Button icon="plus" />
           <Button
@@ -159,12 +165,20 @@ class MessageForm extends Component {
 
           <input />
 
-          <Button color="green" icon labelPosition="left" onClick={this.sendMessage}>
+          <Button
+            color="green"
+            icon
+            labelPosition="left"
+            onClick={this.sendMessage}>
             <Icon name="send" />
             SEND
           </Button>
 
-          <FileModal uploadFile={this.uploadFile} modal={modal} closeModal={this.closeModal} />
+          <FileModal
+            uploadFile={this.uploadFile}
+            modal={modal}
+            closeModal={this.closeModal}
+          />
         </Input>
         <ProgressBar
           uploadState={uploadState}

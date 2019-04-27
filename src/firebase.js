@@ -6,12 +6,12 @@ import 'firebase/storage';
 import * as FIREBASE_CONFIG from './firebaseConfig';
 
 const config = {
-	apiKey: FIREBASE_CONFIG.API_KEY,
-	authDomain: FIREBASE_CONFIG.AUTH_DOMAIN,
-	databaseURL: FIREBASE_CONFIG.DATABASE_URL,
-	projectId: FIREBASE_CONFIG.PROJECT_ID,
-	storageBucket: FIREBASE_CONFIG.STORAGE_BUCKET,
-	messagingSenderId: FIREBASE_CONFIG.MESSAGING_SENDER_ID,
+  apiKey: FIREBASE_CONFIG.API_KEY,
+  authDomain: FIREBASE_CONFIG.AUTH_DOMAIN,
+  databaseURL: FIREBASE_CONFIG.DATABASE_URL,
+  projectId: FIREBASE_CONFIG.PROJECT_ID,
+  storageBucket: FIREBASE_CONFIG.STORAGE_BUCKET,
+  messagingSenderId: FIREBASE_CONFIG.MESSAGING_SENDER_ID,
 };
 firebase.initializeApp(config);
 
@@ -20,12 +20,16 @@ const firebaseUsers = firebaseDB.ref('users');
 const firebaseGroupChats = firebaseDB.ref('groupChats');
 const firebaseMessages = firebaseDB.ref('messages');
 const firebaseStorage = firebase.storage().ref();
+const firebaseUsersConnect = firebaseDB.ref('.info/connected');
+const firebaseUserStatus = firebaseDB.ref('status');
 
 export {
-	firebase,
-	firebaseDB,
-	firebaseUsers,
-	firebaseGroupChats,
-	firebaseMessages,
-	firebaseStorage,
+  firebase,
+  firebaseDB,
+  firebaseUsers,
+  firebaseGroupChats,
+  firebaseMessages,
+  firebaseStorage,
+  firebaseUsersConnect,
+  firebaseUserStatus,
 };

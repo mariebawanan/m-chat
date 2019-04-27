@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Segment, Button, Container, Grid } from 'semantic-ui-react';
+import { Segment, Grid } from 'semantic-ui-react';
 
 import MessagesHeader from './MessagesHeader';
 import MessageForm from './MessageForm';
@@ -56,7 +56,11 @@ class Messages extends Component {
   displayMessages = messages =>
     messages.length > 0 &&
     messages.map(message => (
-      <Message key={message.timestamp} message={message} user={this.state.user} />
+      <Message
+        key={message.timestamp}
+        message={message}
+        user={this.state.user}
+      />
     ));
 
   displayChatName = chat => (chat ? chat.name : '');
@@ -65,7 +69,10 @@ class Messages extends Component {
     const chatMessages = [...this.state.messages];
     const regex = new RegExp(this.state.searchKeyword, 'gi');
     const searchResults = chatMessages.reduce((acc, message) => {
-      if ((message.content && message.content.match(regex)) || message.user.name.match(regex))
+      if (
+        (message.content && message.content.match(regex)) ||
+        message.user.name.match(regex)
+      )
         acc.push(message);
       return acc;
     }, []);
@@ -106,10 +113,16 @@ class Messages extends Component {
         />
         <Segment className="messages-panel">
           <Grid compact="true">
-            {searchKeyword ? this.displayMessages(searchResults) : this.displayMessages(messages)}
+            {searchKeyword
+              ? this.displayMessages(searchResults)
+              : this.displayMessages(messages)}
           </Grid>
         </Segment>
-        <MessageForm chat={chat} currentUser={user} firebaseMessages={firebaseMessages} />
+        <MessageForm
+          chat={chat}
+          currentUser={user}
+          firebaseMessages={firebaseMessages}
+        />
       </Segment>
     );
   }
