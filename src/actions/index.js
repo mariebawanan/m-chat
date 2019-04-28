@@ -4,6 +4,8 @@ import {
   SET_CURRENT_CHAT,
   SET_PRIVATE_CHAT,
   SET_THEME,
+  CLEAR_CHAT,
+  CLEAR_THEME,
 } from './types';
 
 // User actions
@@ -35,13 +37,18 @@ export const setCurrentChat = groupChat => {
   };
 };
 
-// Chat actions
 export const setPrivateChat = isPrivateChat => {
   return {
     type: SET_PRIVATE_CHAT,
     payload: {
       isPrivateChat,
     },
+  };
+};
+
+export const clearChat = () => {
+  return {
+    type: CLEAR_CHAT,
   };
 };
 
@@ -52,5 +59,11 @@ export const setTheme = color => {
     payload: {
       theme: color,
     },
+  };
+};
+
+export const clearTheme = () => {
+  return {
+    type: CLEAR_THEME,
   };
 };
