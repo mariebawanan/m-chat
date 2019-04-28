@@ -142,10 +142,8 @@ class UserPanel extends Component {
             <Container>
               <Comment.Group>
                 <Comment>
-                  {console.log(user.photoURL)}
                   <Comment.Avatar src={user.photoURL} />
                   <Comment.Content>
-                    {console.log(user.displayName)}
                     <Comment.Author as="a">{user.displayName}</Comment.Author>
                     <Comment.Actions>
                       <Comment.Action onClick={this.openModal}>
@@ -290,11 +288,7 @@ class UserPanel extends Component {
   }
 }
 
-const mapStateToProps = ({ user }) => ({
-  currentUser: user.currentUser,
-});
-
 export default connect(
-  mapStateToProps,
+  null,
   { setTheme },
 )(UserPanel);

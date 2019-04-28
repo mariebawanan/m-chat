@@ -6,10 +6,6 @@ import GroupChats from './GroupChats';
 import PersonalMessages from './PersonalMessages';
 
 class SidePanel extends Component {
-  componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
-  }
-
   render() {
     const { currentUser, theme } = this.props;
     return (
@@ -20,7 +16,7 @@ class SidePanel extends Component {
         color={theme ? theme : ''}
         style={{ overflowY: 'scroll', fontSize: '1.25rem' }}>
         <Menu.Item>
-          <UserPanel />
+          <UserPanel currentUser={currentUser} />
         </Menu.Item>
 
         <GroupChats currentUser={currentUser} />
