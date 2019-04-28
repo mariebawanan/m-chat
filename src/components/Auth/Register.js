@@ -12,6 +12,9 @@ import {
 import { Link } from 'react-router-dom';
 import md5 from 'md5';
 
+import { connect } from 'react-redux';
+import { setUser } from '../../actions';
+
 import { firebase, firebaseUsers } from '../../firebase';
 
 class Register extends Component {
@@ -86,6 +89,8 @@ class Register extends Component {
             })
             .then(() => {
               // this.setState({ loading: false });
+              console.log(createdUser.user);
+              this.props.setUser(createdUser.user);
               this.saveUser(createdUser).then(() => {
                 this.setState(
                   {
@@ -110,6 +115,10 @@ class Register extends Component {
       avatar: createdUser.user.photoURL,
     });
   };
+
+  componentWillUnmount() {
+    firebaseUsers.off();
+  }
 
   render() {
     const {
@@ -208,4 +217,7 @@ class Register extends Component {
   }
 }
 
-export default Register;
+export default connect(
+  null,
+  { setUser },
+)(Register);
