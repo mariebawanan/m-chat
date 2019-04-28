@@ -22,7 +22,7 @@ const firebaseMessages = firebaseDB.ref('messages');
 const firebaseStorage = firebase.storage().ref();
 const firebaseUsersConnect = firebaseDB.ref('.info/connected');
 const firebaseUserStatus = firebaseDB.ref('status');
-const firebasePrivateMessages = firebaseDB.ref('privateMeesages');
+const firebasePrivateMessages = firebaseDB.ref('privateMessages');
 const firebaseTypingUsers = firebaseDB.ref('typingUsers');
 
 export {
