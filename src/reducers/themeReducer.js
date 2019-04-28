@@ -1,4 +1,4 @@
-import { SET_THEME } from '../actions/types';
+import { SET_THEME, CLEAR_THEME } from '../actions/types';
 
 const initialThemeState = {
   theme: 'green',
@@ -9,7 +9,10 @@ const theme_reducer = (state = initialThemeState, action) => {
       return {
         theme: action.payload.theme,
       };
-
+    case CLEAR_THEME:
+      return {
+        ...initialThemeState,
+      };
     default:
       return state;
   }

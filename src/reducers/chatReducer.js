@@ -1,4 +1,8 @@
-import { SET_CURRENT_CHAT, SET_PRIVATE_CHAT } from '../actions/types';
+import {
+  SET_CURRENT_CHAT,
+  SET_PRIVATE_CHAT,
+  CLEAR_CHAT,
+} from '../actions/types';
 
 const initialChatState = {
   currentChat: null,
@@ -15,6 +19,10 @@ const chat_reducer = (state = initialChatState, action) => {
       return {
         ...state,
         isPrivateChat: action.payload.isPrivateChat,
+      };
+    case CLEAR_CHAT:
+      return {
+        ...initialChatState,
       };
     default:
       return state;
