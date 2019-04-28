@@ -29,7 +29,6 @@ class Root extends Component {
       if (user) {
         this.props.setUser(user);
         this.setUserTheme(user);
-        this.props.history.push('/');
       } else {
         this.props.history.push('/login');
         this.props.clearUser();
