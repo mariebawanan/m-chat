@@ -11,7 +11,6 @@ import {
   firebasePrivateMessages,
   firebaseTypingUsers,
   firebaseUsersConnect,
-  firebaseUserStatus,
 } from '../../firebase';
 
 class Messages extends Component {
@@ -138,13 +137,13 @@ class Messages extends Component {
       this.countUniqueUsers(loadedMessages);
     });
 
-    firebaseMessages.child(this.state.chat.id).on('value', snap => {
+    ref.child(this.state.chat.id).on('value', snap => {
       if (!snap.exists()) {
         this.setState({ messagesLoading: false });
       }
     });
 
-    this.addToListeners(chatId, firebaseUserStatus, 'child_added');
+    this.addToListeners(chatId, ref, 'child_added');
   };
 
   countUniqueUsers = messages => {
@@ -177,7 +176,12 @@ class Messages extends Component {
     </React.Fragment>
   );
 
-  displayChatName = chat => (chat ? chat.name : '');
+  displayValue = (chat, field) => {
+    if (chat) {
+      if (field === 'name') return chat.name;
+      else return chat.details;
+    }
+  };
 
   searchMessages = () => {
     const chatMessages = [...this.state.messages];
@@ -226,14 +230,17 @@ class Messages extends Component {
     } = this.state;
     return (
       <Segment style={{ height: '100vh', paddingBottom: '0px' }}>
-        <MessagesHeader
-          theme={theme}
-          isPrivateChat={isPrivateChat}
-          handleChange={this.handleChange}
-          chatName={this.displayChatName(chat)}
-          numUniqueUsers={numUniqueUsers}
-          searchLoading={searchLoading}
-        />
+        {chat && (
+          <MessagesHeader
+            theme={theme}
+            isPrivateChat={isPrivateChat}
+            handleChange={this.handleChange}
+            chatName={this.displayValue(chat, 'name')}
+            chatDetails={this.displayValue(chat, 'details')}
+            numUniqueUsers={numUniqueUsers}
+            searchLoading={searchLoading}
+          />
+        )}
         <Segment className="messages-panel">
           {messages.length ? (
             <Grid compact="true">

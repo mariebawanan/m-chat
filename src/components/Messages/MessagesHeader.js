@@ -5,6 +5,7 @@ class MessagesHeader extends Component {
   render() {
     const {
       chatName,
+      chatDetails,
       numUniqueUsers,
       handleChange,
       searchLoading,
@@ -14,23 +15,22 @@ class MessagesHeader extends Component {
 
     return (
       <Segment clearing color={theme} inverted>
-        {chatName ? (
-          <Header inverted as="h2" floated="left">
-            {isPrivateChat ? '' : '# '}
-            {chatName}
-            {isPrivateChat ? (
-              <Header.Subheader>Private chat</Header.Subheader>
-            ) : (
-              <Header.Subheader>
-                {numUniqueUsers
-                  ? `${numUniqueUsers} user${
-                      numUniqueUsers > 1 ? 's are' : ' is '
-                    } participating in this chat`
-                  : 'no users yet. write a message'}
-              </Header.Subheader>
-            )}
-          </Header>
-        ) : null}
+        <Header inverted as="h2" floated="left">
+          {isPrivateChat ? '' : '# '}
+          {chatName}
+          {isPrivateChat ? (
+            <Header.Subheader>Private chat</Header.Subheader>
+          ) : (
+            <Header.Subheader>
+              {`Details: ${chatDetails}`}
+              {numUniqueUsers
+                ? ` ( ${numUniqueUsers} user${
+                    numUniqueUsers > 1 ? 's )' : ' )'
+                  }`
+                : '(no users)'}
+            </Header.Subheader>
+          )}
+        </Header>
         {/* Search within the current chat */}
         <Header floated="right">
           <Input

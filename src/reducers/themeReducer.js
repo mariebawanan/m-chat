@@ -1,7 +1,7 @@
 import { SET_THEME, CLEAR_THEME } from '../actions/types';
 
 const initialThemeState = {
-  theme: 'green',
+  theme: 'grey',
 };
 const theme_reducer = (state = initialThemeState, action) => {
   switch (action.type) {

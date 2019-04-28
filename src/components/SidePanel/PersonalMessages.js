@@ -48,18 +48,6 @@ class PersonalMessages extends Component {
     });
 
     firebaseUsersConnect.on('value', snap => {
-      if (snap.val()) {
-        const ref = firebaseUserStatus.child(currentUserUid);
-        ref.set(true);
-        ref.onDisconnect().remove(error => {
-          if (error !== null) {
-            console.log(error);
-          }
-        });
-      }
-    });
-
-    firebaseUsersConnect.on('value', snap => {
       if (snap.val() === true) {
         const ref = firebaseUserStatus.child(currentUserUid);
         ref.set(true);

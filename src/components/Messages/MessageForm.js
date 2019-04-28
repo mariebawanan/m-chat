@@ -79,7 +79,7 @@ class MessageForm extends Component {
 
   getPath = () => {
     if (this.props.isPrivateChat) {
-      return `chat/private-${this.state.chat.id}`;
+      return `chat/private/${this.state.chat.id}`;
     } else {
       return 'chat/public';
     }
@@ -250,6 +250,7 @@ class MessageForm extends Component {
           name="message"
           disabled={chat ? false : true}
           value={message}
+          autoComplete="off"
           ref={input => (this.messageInputRef = input)}
           className={
             errors.some(error => error.message.includes('message'))

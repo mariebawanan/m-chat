@@ -35,11 +35,7 @@ class UserPanel extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    console.log('hmmm');
-    this.setState({ user: nextProps.currentUser }, () => {
-      console.log(this.state.user);
-      console.log(firebase.auth().currentUser);
-    });
+    this.setState({ user: nextProps.currentUser });
   }
 
   handleSignOut = () => {
@@ -97,7 +93,7 @@ class UserPanel extends Component {
     const { userRef, blob, metadata } = this.state;
 
     firebaseStorage
-      .child(`avatars/user-${userRef.uid}`)
+      .child(`avatars/user/${userRef.uid}`)
       .put(blob, metadata)
       .then(snap => {
         snap.ref.getDownloadURL().then(downloadURL => {
@@ -141,151 +137,164 @@ class UserPanel extends Component {
     const { user, modal, previewImage, croppedImage, uploading } = this.state;
     return (
       <div>
-        <Container>
-          <Comment.Group>
-            <Comment>
-              <Comment.Avatar src={user.photoURL} />
-              <Comment.Content>
-                <Comment.Author as="a">{user.displayName}</Comment.Author>
-                <Comment.Actions>
-                  <Comment.Action onClick={this.openModal}>
-                    Change avatar{' '}
-                  </Comment.Action>
+        {user && (
+          <>
+            <Container>
+              <Comment.Group>
+                <Comment>
+                  {console.log(user.photoURL)}
+                  <Comment.Avatar src={user.photoURL} />
+                  <Comment.Content>
+                    {console.log(user.displayName)}
+                    <Comment.Author as="a">{user.displayName}</Comment.Author>
+                    <Comment.Actions>
+                      <Comment.Action onClick={this.openModal}>
+                        Change avatar{' '}
+                      </Comment.Action>
 
-                  <Comment.Action onClick={this.handleSignOut}>
-                    Log out
-                  </Comment.Action>
-                </Comment.Actions>
-              </Comment.Content>
-            </Comment>
-            <Comment>
-              <Comment.Content>
-                <Comment.Actions>
-                  <span style={{ fontStyle: 'italic' }}>Theme: </span>
-                  <Comment.Action style={{ opacity: 0.8 }}>
-                    <Icon
-                      name="circle"
-                      color="red"
-                      onClick={() => this.handleTheme('red')}
-                    />
-                    <Icon
-                      name="circle"
-                      color="blue"
-                      onClick={() => this.handleTheme('blue')}
-                    />
-                    <Icon
-                      name="circle"
-                      color="green"
-                      onClick={() => this.handleTheme('green')}
-                    />
-                    <Icon
-                      name="circle"
-                      color="orange"
-                      onClick={() => this.handleTheme('orange')}
-                    />
-                    <Icon
-                      name="circle"
-                      color="teal"
-                      onClick={() => this.handleTheme('teal')}
-                    />
-                    <Icon
-                      name="circle"
-                      color="violet"
-                      onClick={() => this.handleTheme('violet')}
-                    />
-                    <Icon
-                      name="circle"
-                      color="black"
-                      onClick={() => this.handleTheme('black')}
-                    />
-                    <Icon
-                      name="circle"
-                      color="grey"
-                      onClick={() => this.handleTheme('grey')}
-                    />
-                  </Comment.Action>
-                </Comment.Actions>
-              </Comment.Content>
-            </Comment>
-          </Comment.Group>
-
-          <Divider />
-        </Container>
-
-        <Modal size="small" open={modal} onClose={this.closeModal}>
-          <Modal.Header>Change avatar</Modal.Header>
-          <Modal.Content>
-            <Input
-              fluid
-              type="file"
-              label="New avatar"
-              name="previewImage"
-              onChange={this.handleChange}
-            />
-            {previewImage && (
-              <Segment>
-                <Grid columns={2} stackable textAlign="center">
-                  <Grid.Row verticalAlign="middle">
-                    <Grid.Column>
-                      {previewImage && (
-                        <AvatarEditor
-                          ref={node => (this.avatarEditor = node)}
-                          image={previewImage}
-                          width={120}
-                          height={120}
-                          border={50}
-                          scale={1.2}
+                      <Comment.Action onClick={this.handleSignOut}>
+                        Log out
+                      </Comment.Action>
+                    </Comment.Actions>
+                  </Comment.Content>
+                </Comment>
+                <Comment>
+                  <Comment.Content>
+                    <Comment.Actions>
+                      <span style={{ fontStyle: 'italic' }}>Theme: </span>
+                      <Comment.Action style={{ opacity: 0.8 }}>
+                        <Icon
+                          name="circle"
+                          color="red"
+                          onClick={() => this.handleTheme('red')}
                         />
-                      )}
-                    </Grid.Column>
+                        <Icon
+                          name="circle"
+                          color="blue"
+                          onClick={() => this.handleTheme('blue')}
+                        />
+                        <Icon
+                          name="circle"
+                          color="green"
+                          onClick={() => this.handleTheme('green')}
+                        />
+                        <Icon
+                          name="circle"
+                          color="orange"
+                          onClick={() => this.handleTheme('orange')}
+                        />
+                        <Icon
+                          name="circle"
+                          color="teal"
+                          onClick={() => this.handleTheme('teal')}
+                        />
+                        <Icon
+                          name="circle"
+                          color="violet"
+                          onClick={() => this.handleTheme('violet')}
+                        />
+                        <Icon
+                          name="circle"
+                          color="black"
+                          onClick={() => this.handleTheme('black')}
+                        />
+                        <Icon
+                          name="circle"
+                          color="grey"
+                          onClick={() => this.handleTheme('grey')}
+                        />
+                      </Comment.Action>
+                    </Comment.Actions>
+                  </Comment.Content>
+                </Comment>
+              </Comment.Group>
 
-                    <Grid.Column>
-                      {croppedImage && (
-                        <>
-                          <Header>Preview</Header>
-                          <Image
-                            style={{ margin: '3.5em auto' }}
-                            width={100}
-                            height={100}
-                            src={croppedImage}
-                          />
-                        </>
-                      )}
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </Segment>
-            )}
-          </Modal.Content>
-          <Modal.Actions>
-            {croppedImage && (
-              <Button
-                color="blue"
-                loading={uploading}
-                onClick={this.uploadCroppedImage}>
-                <Icon name="save" /> Change Avatar
-              </Button>
-            )}
-            {previewImage && (
-              <Button
-                color="green"
-                disabled={uploading}
-                onClick={this.handleCropImage}>
-                <Icon name="image" /> Preview
-              </Button>
-            )}
+              <Divider />
+            </Container>
 
-            <Button color="red" disabled={uploading} onClick={this.closeModal}>
-              <Icon name="remove" /> Cancel
-            </Button>
-          </Modal.Actions>
-        </Modal>
+            <Modal size="small" open={modal} onClose={this.closeModal}>
+              <Modal.Header>Change avatar</Modal.Header>
+              <Modal.Content>
+                <Input
+                  fluid
+                  type="file"
+                  label="New avatar"
+                  name="previewImage"
+                  onChange={this.handleChange}
+                />
+                {previewImage && (
+                  <Segment>
+                    <Grid columns={2} stackable textAlign="center">
+                      <Grid.Row verticalAlign="middle">
+                        <Grid.Column>
+                          {previewImage && (
+                            <AvatarEditor
+                              ref={node => (this.avatarEditor = node)}
+                              image={previewImage}
+                              width={120}
+                              height={120}
+                              border={50}
+                              scale={1.2}
+                            />
+                          )}
+                        </Grid.Column>
+
+                        <Grid.Column>
+                          {croppedImage && (
+                            <>
+                              <Header>Preview</Header>
+                              <Image
+                                style={{ margin: '3.5em auto' }}
+                                width={100}
+                                height={100}
+                                src={croppedImage}
+                              />
+                            </>
+                          )}
+                        </Grid.Column>
+                      </Grid.Row>
+                    </Grid>
+                  </Segment>
+                )}
+              </Modal.Content>
+              <Modal.Actions>
+                {croppedImage && (
+                  <Button
+                    color="blue"
+                    loading={uploading}
+                    onClick={this.uploadCroppedImage}>
+                    <Icon name="save" /> Change Avatar
+                  </Button>
+                )}
+                {previewImage && (
+                  <Button
+                    color="green"
+                    disabled={uploading}
+                    onClick={this.handleCropImage}>
+                    <Icon name="image" /> Preview
+                  </Button>
+                )}
+
+                <Button
+                  color="red"
+                  disabled={uploading}
+                  onClick={this.closeModal}>
+                  <Icon name="remove" /> Cancel
+                </Button>
+              </Modal.Actions>
+            </Modal>
+          </>
+        )}
       </div>
     );
   }
 }
 
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser,
+});
+
 export default connect(
-  null,
+  mapStateToProps,
   { setTheme },
 )(UserPanel);
