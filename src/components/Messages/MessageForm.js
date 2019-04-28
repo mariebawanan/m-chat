@@ -33,6 +33,13 @@ class MessageForm extends Component {
     this.setState({ theme: nextProps.theme });
   }
 
+  componentWillUnmount() {
+    if (this.state.uploadTask !== null) {
+      this.state.uploadTask.cancel();
+      this.setState({ uploadTask: null });
+    }
+  }
+
   createMessage = (fileURL = null) => {
     const message = {
       timestamp: firebase.database.ServerValue.TIMESTAMP,
@@ -127,6 +134,7 @@ class MessageForm extends Component {
     const { message, chat, errors, user } = this.state;
     const { getMessagesRef } = this.props;
     if (message) {
+      this.messageInputRef.focus();
       getMessagesRef()
         .child(chat.id)
         .push()
@@ -138,6 +146,7 @@ class MessageForm extends Component {
             .child(user.uid)
             .remove();
         })
+
         .catch(error => {
           console.error(error);
           this.setState({
@@ -164,17 +173,19 @@ class MessageForm extends Component {
     this.setState({ modal: false });
   };
 
-  handleKeyDown = () => {
+  handleKeyDown = event => {
+    if (event.keyCode === 13) {
+      this.sendMessage();
+    }
+
     const { message, chat, user } = this.state;
 
     if (message.length) {
-      console.log(message);
       firebaseTypingUsers
         .child(chat.id)
         .child(user.uid)
         .set(user.displayName);
     } else {
-      console.log('removing');
       firebaseTypingUsers
         .child(chat.id)
         .child(user.uid)
@@ -210,6 +221,7 @@ class MessageForm extends Component {
 
   render() {
     const {
+      chat,
       errors,
       message,
       modal,
@@ -236,6 +248,7 @@ class MessageForm extends Component {
           fluid
           size="huge"
           name="message"
+          disabled={chat ? false : true}
           value={message}
           ref={input => (this.messageInputRef = input)}
           className={
@@ -246,12 +259,13 @@ class MessageForm extends Component {
           onChange={this.handleChange}
           onKeyDown={this.handleKeyDown}>
           <Button
-            disabled={uploadState === 'uploading'}
+            disabled={uploadState === 'uploading' || chat ? false : true}
             color={theme}
             icon="cloud upload"
             onClick={this.openModal}
           />
           <Button
+            disabled={chat ? false : true}
             onClick={this.togglePicker}
             icon={emojiPicker ? 'close' : 'add'}
           />
@@ -259,6 +273,7 @@ class MessageForm extends Component {
           <input />
 
           <Button
+            disabled={chat && message ? false : true}
             color={theme}
             icon
             labelPosition="left"
@@ -268,6 +283,7 @@ class MessageForm extends Component {
           </Button>
 
           <FileModal
+            theme={theme}
             uploadFile={this.uploadFile}
             modal={modal}
             closeModal={this.closeModal}
@@ -278,6 +294,7 @@ class MessageForm extends Component {
           uploadState={uploadState}
           percentUploaded={percentUploaded}
           attached="bottom"
+          theme={theme}
         />
       </>
     );

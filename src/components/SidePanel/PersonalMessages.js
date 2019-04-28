@@ -16,6 +16,7 @@ class PersonalMessages extends Component {
     users: [],
     theme: this.props.theme,
   };
+
   componentDidMount() {
     if (this.state.user) {
       this.addListeners(this.state.user.uid);
@@ -25,6 +26,16 @@ class PersonalMessages extends Component {
   componentWillReceiveProps(nextProps) {
     this.setState({ theme: nextProps.theme });
   }
+
+  componentWillUnmount() {
+    this.removeListeners();
+  }
+
+  removeListeners = () => {
+    firebaseUsers.off();
+    firebaseUserStatus.off();
+    firebaseUsersConnect.off();
+  };
 
   addListeners = currentUserUid => {
     let loadedUsers = [];

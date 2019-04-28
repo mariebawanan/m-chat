@@ -11,6 +11,7 @@ import {
   firebasePrivateMessages,
   firebaseTypingUsers,
   firebaseUsersConnect,
+  firebaseUserStatus,
 } from '../../firebase';
 
 class Messages extends Component {
@@ -25,14 +26,25 @@ class Messages extends Component {
     searchLoading: false,
     searchResults: [],
     typingUsers: [],
+    listeners: [],
   };
 
   componentDidMount() {
-    const { chat, user } = this.state;
+    const { chat, user, listeners } = this.state;
 
     if (chat && user) {
+      this.removeListeners(listeners);
       this.addListeners(chat.id);
     }
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({ theme: nextProps.theme });
+  }
+
+  componentWillUnmount() {
+    this.removeListeners(this.state.listeners);
+    firebaseUsersConnect.off();
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -45,9 +57,22 @@ class Messages extends Component {
     this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
   };
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({ theme: nextProps.theme });
-  }
+  removeListeners = listeners => {
+    listeners.forEach(listener => {
+      listener.ref.child(listener.id).off(listener.event);
+    });
+  };
+
+  addToListeners = (id, ref, event) => {
+    const index = this.state.listeners.findIndex(listener => {
+      return (listener.id === listener.ref) === ref && listener.event === event;
+    });
+
+    if (index === -1) {
+      const newListener = { id, ref, event };
+      this.setState({ listeners: this.state.listeners.concat(newListener) });
+    }
+  };
 
   addListeners = chatId => {
     this.addMessageListener(chatId);
@@ -66,6 +91,8 @@ class Messages extends Component {
       }
     });
 
+    this.addToListeners(chatId, firebaseTypingUsers, 'child_added');
+
     firebaseTypingUsers.child(chatId).on('child_removed', snap => {
       const index = typingUsers.findIndex(user => user.id === snap.key);
       if (index !== -1) {
@@ -73,6 +100,8 @@ class Messages extends Component {
         this.setState({ typingUsers });
       }
     });
+
+    this.addToListeners(chatId, firebaseTypingUsers, 'child_removed');
 
     firebaseUsersConnect.on('value', snap => {
       if (snap.val() === true) {
@@ -100,7 +129,6 @@ class Messages extends Component {
   addMessageListener = chatId => {
     let loadedMessages = [];
     const ref = this.getMessagesRef();
-    this.checkCurrentMessages();
     ref.child(chatId).on('child_added', snap => {
       loadedMessages.push(snap.val());
       this.setState({
@@ -109,20 +137,14 @@ class Messages extends Component {
       });
       this.countUniqueUsers(loadedMessages);
     });
-  };
 
-  checkCurrentMessages = () => {
-    let chatEmpty = false;
-    firebaseMessages
-      .child(this.state.chat.id)
-      .once('value', function(snapshot) {
-        chatEmpty = snapshot.val() === null;
-      })
-      .then(() => {
-        if (chatEmpty) {
-          this.setState({ messagesLoading: false });
-        }
-      });
+    firebaseMessages.child(this.state.chat.id).on('value', snap => {
+      if (!snap.exists()) {
+        this.setState({ messagesLoading: false });
+      }
+    });
+
+    this.addToListeners(chatId, firebaseUserStatus, 'child_added');
   };
 
   countUniqueUsers = messages => {
@@ -147,14 +169,13 @@ class Messages extends Component {
       />
     ));
 
-  displayMessagePlaceholder = loading =>
-    loading ? (
-      <React.Fragment>
-        {[...Array(9)].map((_, i) => (
-          <Placeholder key={i} />
-        ))}
-      </React.Fragment>
-    ) : null;
+  displayMessagePlaceholder = () => (
+    <React.Fragment>
+      {[...Array(9)].map((_, i) => (
+        <Placeholder key={i} />
+      ))}
+    </React.Fragment>
+  );
 
   displayChatName = chat => (chat ? chat.name : '');
 
@@ -214,23 +235,26 @@ class Messages extends Component {
           searchLoading={searchLoading}
         />
         <Segment className="messages-panel">
-          {!messages.length && !messagesLoading ? (
-            <Header as="h2" icon textAlign="center">
-              <Icon name="write square" />
-              Write the first message
-              <Header.Subheader>No messages found</Header.Subheader>
-            </Header>
+          {messages.length ? (
+            <Grid compact="true">
+              {searchKeyword
+                ? this.displayMessages(searchResults)
+                : this.displayMessages(messages)}
+              {this.displayTypingUsers(typingUsers)}
+              <div ref={node => (this.messagesEnd = node)} />
+            </Grid>
+          ) : messagesLoading && chat ? (
+            this.displayMessagePlaceholder()
           ) : (
-            <>
-              {this.displayMessagePlaceholder(messagesLoading)}
-              <Grid compact="true">
-                {searchKeyword
-                  ? this.displayMessages(searchResults)
-                  : this.displayMessages(messages)}
-                {this.displayTypingUsers(typingUsers)}
-                <div ref={node => (this.messagesEnd = node)} />
-              </Grid>
-            </>
+            chat && (
+              <Header as="h2" icon textAlign="center">
+                <Icon name="write square" />
+                Write the first message
+                <Header.Subheader>
+                  No messages found in this chat
+                </Header.Subheader>
+              </Header>
+            )
           )}
         </Segment>
 

@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import AvatarEditor from 'react-avatar-editor';
 
 import { firebase, firebaseUsers, firebaseStorage } from '../../firebase';
-import { setTheme, clearUser } from '../../actions';
+import { setTheme } from '../../actions';
 
 class UserPanel extends Component {
   state = {
@@ -35,7 +35,11 @@ class UserPanel extends Component {
   };
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ user: nextProps.currentUser });
+    console.log('hmmm');
+    this.setState({ user: nextProps.currentUser }, () => {
+      console.log(this.state.user);
+      console.log(firebase.auth().currentUser);
+    });
   }
 
   handleSignOut = () => {
@@ -50,8 +54,6 @@ class UserPanel extends Component {
         this.props.setTheme(color);
       });
   };
-
-  handleChangeAvatar = () => {};
 
   openModal = () => {
     this.setState({ modal: true });
@@ -103,6 +105,9 @@ class UserPanel extends Component {
             this.changeAvatar(),
           );
         });
+      })
+      .catch(error => {
+        console.error(error.message);
       });
   };
 
@@ -282,5 +287,5 @@ class UserPanel extends Component {
 
 export default connect(
   null,
-  { setTheme, clearUser },
+  { setTheme },
 )(UserPanel);

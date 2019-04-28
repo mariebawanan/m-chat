@@ -1,7 +1,7 @@
 import React from 'react';
 import { Progress } from 'semantic-ui-react';
 
-const ProgressBar = ({ uploadState, percentUploaded }) =>
+const ProgressBar = ({ uploadState, percentUploaded, theme }) =>
   uploadState === 'uploading' && (
     <Progress
       className="message-progress"
@@ -10,7 +10,7 @@ const ProgressBar = ({ uploadState, percentUploaded }) =>
       indicating
       size="small"
       inverted
-      color="green"
+      color={theme}
     />
   );
 

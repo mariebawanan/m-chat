@@ -15,7 +15,6 @@ import { setCurrentChat, setPrivateChat } from '../../actions/index';
 
 import {
   firebaseGroupChats,
-  firebaseUsers,
   firebaseMessages,
   firebaseTypingUsers,
 } from '../../firebase';
@@ -32,6 +31,7 @@ class GroupChats extends Component {
     chat: null,
     notifications: [],
     user: this.props.currentUser,
+    listLoading: true,
   };
 
   componentDidMount() {
@@ -46,10 +46,16 @@ class GroupChats extends Component {
     let groupChatList = [];
     firebaseGroupChats.on('child_added', snap => {
       groupChatList.push(snap.val());
-      this.setState({ groupChatList }, () => {
+      this.setState({ groupChatList, listLoading: false }, () => {
         this.setDefaultActiveChat();
       });
       this.addNotification(snap.key);
+    });
+
+    firebaseGroupChats.on('value', snap => {
+      if (!snap.exists()) {
+        this.setState({ listLoading: false });
+      }
     });
   };
 
@@ -119,7 +125,10 @@ class GroupChats extends Component {
   };
 
   removeListeners = () => {
-    firebaseUsers.off();
+    firebaseGroupChats.off();
+    this.state.groupChatList.forEach(chat => {
+      firebaseMessages.child(chat.id).off();
+    });
   };
 
   // Set the first group chat as the default active chat during initial load
@@ -222,7 +231,7 @@ class GroupChats extends Component {
   };
 
   render() {
-    const { groupChatList, modal, loading } = this.state;
+    const { groupChatList, modal, loading, listLoading } = this.state;
     return (
       <>
         {/* Header for the group chat section */}
@@ -235,10 +244,12 @@ class GroupChats extends Component {
           </Menu.Item>
           {groupChatList.length ? (
             this.displayGroupChatList(groupChatList)
-          ) : (
+          ) : listLoading ? (
             <Dimmer active inverted>
-              <Loader inverted>Loading</Loader>
+              <Loader inverted content="Loading" />
             </Dimmer>
+          ) : (
+            <Menu.Item>No group chats</Menu.Item>
           )}
         </Menu.Menu>
 
