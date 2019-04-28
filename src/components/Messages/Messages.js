@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Segment, Grid } from 'semantic-ui-react';
+import { Segment, Grid, Header, Icon } from 'semantic-ui-react';
 
 import MessagesHeader from './MessagesHeader';
 import MessageForm from './MessageForm';
 import Message from './Message';
+import Placeholder from './Placeholder';
 
 import {
   firebaseMessages,
@@ -33,6 +34,16 @@ class Messages extends Component {
       this.addListeners(chat.id);
     }
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.messagesEnd) {
+      this.scrollToBottom();
+    }
+  }
+
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView({ behavior: 'smooth' });
+  };
 
   componentWillReceiveProps(nextProps) {
     this.setState({ theme: nextProps.theme });
@@ -89,6 +100,7 @@ class Messages extends Component {
   addMessageListener = chatId => {
     let loadedMessages = [];
     const ref = this.getMessagesRef();
+    this.checkCurrentMessages();
     ref.child(chatId).on('child_added', snap => {
       loadedMessages.push(snap.val());
       this.setState({
@@ -97,6 +109,20 @@ class Messages extends Component {
       });
       this.countUniqueUsers(loadedMessages);
     });
+  };
+
+  checkCurrentMessages = () => {
+    let chatEmpty = false;
+    firebaseMessages
+      .child(this.state.chat.id)
+      .once('value', function(snapshot) {
+        chatEmpty = snapshot.val() === null;
+      })
+      .then(() => {
+        if (chatEmpty) {
+          this.setState({ messagesLoading: false });
+        }
+      });
   };
 
   countUniqueUsers = messages => {
@@ -120,6 +146,15 @@ class Messages extends Component {
         user={this.state.user}
       />
     ));
+
+  displayMessagePlaceholder = loading =>
+    loading ? (
+      <React.Fragment>
+        {[...Array(9)].map((_, i) => (
+          <Placeholder key={i} />
+        ))}
+      </React.Fragment>
+    ) : null;
 
   displayChatName = chat => (chat ? chat.name : '');
 
@@ -166,6 +201,7 @@ class Messages extends Component {
       isPrivateChat,
       theme,
       typingUsers,
+      messagesLoading,
     } = this.state;
     return (
       <Segment style={{ height: '100vh', paddingBottom: '0px' }}>
@@ -178,13 +214,26 @@ class Messages extends Component {
           searchLoading={searchLoading}
         />
         <Segment className="messages-panel">
-          <Grid compact="true">
-            {searchKeyword
-              ? this.displayMessages(searchResults)
-              : this.displayMessages(messages)}
-            {this.displayTypingUsers(typingUsers)}
-          </Grid>
+          {!messages.length && !messagesLoading ? (
+            <Header as="h2" icon textAlign="center">
+              <Icon name="write square" />
+              Write the first message
+              <Header.Subheader>No messages found</Header.Subheader>
+            </Header>
+          ) : (
+            <>
+              {this.displayMessagePlaceholder(messagesLoading)}
+              <Grid compact="true">
+                {searchKeyword
+                  ? this.displayMessages(searchResults)
+                  : this.displayMessages(messages)}
+                {this.displayTypingUsers(typingUsers)}
+                <div ref={node => (this.messagesEnd = node)} />
+              </Grid>
+            </>
+          )}
         </Segment>
+
         <MessageForm
           theme={theme}
           isPrivateChat={isPrivateChat}

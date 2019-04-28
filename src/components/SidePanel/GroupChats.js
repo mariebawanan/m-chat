@@ -7,6 +7,8 @@ import {
   Button,
   Input,
   Label,
+  Loader,
+  Dimmer,
 } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { setCurrentChat, setPrivateChat } from '../../actions/index';
@@ -231,7 +233,13 @@ class GroupChats extends Component {
             </span>
             <Icon name="add" onClick={this.openModal} />
           </Menu.Item>
-          {this.displayGroupChatList(groupChatList)}
+          {groupChatList.length ? (
+            this.displayGroupChatList(groupChatList)
+          ) : (
+            <Dimmer active inverted>
+              <Loader inverted>Loading</Loader>
+            </Dimmer>
+          )}
         </Menu.Menu>
 
         {/* Modal for creating a new group chat */}

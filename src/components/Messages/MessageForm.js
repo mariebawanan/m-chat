@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Input, Button, Icon, Segment } from 'semantic-ui-react';
+import { Input, Button, Icon } from 'semantic-ui-react';
 import uuid from 'uuid/v4';
 
 import { Picker, emojiIndex } from 'emoji-mart';

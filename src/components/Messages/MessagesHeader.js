@@ -14,21 +14,23 @@ class MessagesHeader extends Component {
 
     return (
       <Segment clearing color={theme} inverted>
-        <Header inverted as="h2" floated="left">
-          {isPrivateChat ? '' : '# '}
-          {chatName}
-          {isPrivateChat ? (
-            <Header.Subheader>Private chat</Header.Subheader>
-          ) : (
-            <Header.Subheader>
-              {numUniqueUsers
-                ? `${numUniqueUsers} user${
-                    numUniqueUsers > 1 ? 's are' : ' is '
-                  } participating in this chat`
-                : 'no users yet. write a message'}
-            </Header.Subheader>
-          )}
-        </Header>
+        {chatName ? (
+          <Header inverted as="h2" floated="left">
+            {isPrivateChat ? '' : '# '}
+            {chatName}
+            {isPrivateChat ? (
+              <Header.Subheader>Private chat</Header.Subheader>
+            ) : (
+              <Header.Subheader>
+                {numUniqueUsers
+                  ? `${numUniqueUsers} user${
+                      numUniqueUsers > 1 ? 's are' : ' is '
+                    } participating in this chat`
+                  : 'no users yet. write a message'}
+              </Header.Subheader>
+            )}
+          </Header>
+        ) : null}
         {/* Search within the current chat */}
         <Header floated="right">
           <Input
