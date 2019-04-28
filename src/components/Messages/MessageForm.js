@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
-import { Input, Button, Icon } from 'semantic-ui-react';
+import { Input, Button, Icon, Segment } from 'semantic-ui-react';
 import uuid from 'uuid/v4';
+
+import { Picker, emojiIndex } from 'emoji-mart';
+import 'emoji-mart/css/emoji-mart.css';
+
 import { firebase, firebaseStorage, firebaseTypingUsers } from '../../firebase';
 
 import FileModal from './FileModal';
@@ -18,6 +22,7 @@ class MessageForm extends Component {
     uploadState: '',
     uploadTask: null,
     percentUploaded: 0,
+    emojiPicker: false,
   };
 
   handleChange = event => {
@@ -177,6 +182,32 @@ class MessageForm extends Component {
     }
   };
 
+  togglePicker = () => {
+    this.setState({ emojiPicker: !this.state.emojiPicker });
+  };
+
+  colonToUnicode = message => {
+    return message.replace(/:[A-Za-z0-9_+-]+:/g, x => {
+      x = x.replace(/:/g, '');
+      let emoji = emojiIndex.emojis[x];
+      if (typeof emoji !== 'undefined') {
+        let unicode = emoji.native;
+        if (typeof unicode !== 'undefined') {
+          return unicode;
+        }
+      }
+      x = ':' + x + ':';
+      return x;
+    });
+  };
+
+  handleAddEmoji = emoji => {
+    const oldMessage = this.state.message;
+    const newMessage = this.colonToUnicode(`${oldMessage} ${emoji.colons}`);
+    this.setState({ message: newMessage, emojiPicker: false });
+    this.messageInputRef.focus();
+  };
+
   render() {
     const {
       errors,
@@ -185,9 +216,19 @@ class MessageForm extends Component {
       uploadState,
       percentUploaded,
       theme,
+      emojiPicker,
     } = this.state;
     return (
       <>
+        {emojiPicker && (
+          <Picker
+            set="apple"
+            onSelect={this.handleAddEmoji}
+            title="Pick your emoji"
+            emoji="point_up"
+            style={{ position: 'absolute', bottom: '9vh' }}
+          />
+        )}
         <Input
           type="text"
           placeholder="Start typing..."
@@ -196,6 +237,7 @@ class MessageForm extends Component {
           size="huge"
           name="message"
           value={message}
+          ref={input => (this.messageInputRef = input)}
           className={
             errors.some(error => error.message.includes('message'))
               ? 'error'
@@ -203,12 +245,15 @@ class MessageForm extends Component {
           }
           onChange={this.handleChange}
           onKeyDown={this.handleKeyDown}>
-          <Button icon="plus" />
           <Button
             disabled={uploadState === 'uploading'}
             color={theme}
             icon="cloud upload"
             onClick={this.openModal}
+          />
+          <Button
+            onClick={this.togglePicker}
+            icon={emojiPicker ? 'close' : 'add'}
           />
 
           <input />
@@ -228,6 +273,7 @@ class MessageForm extends Component {
             closeModal={this.closeModal}
           />
         </Input>
+
         <ProgressBar
           uploadState={uploadState}
           percentUploaded={percentUploaded}
