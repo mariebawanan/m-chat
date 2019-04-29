@@ -2,7 +2,7 @@
 
 > A chat application bootstrapped with [Create React App](https://github.com/facebook/create-react-app). Built with React, Redux, Firebase and Semantic UI React. Deployed with Firebase Tools.
 
-Check it out [here](https://m-chat-649ff.firebaseapp.com/, 'm-chat!')!
+Check it out [here](https://m-chat-649ff.firebaseapp.com)!
 
 #### :computer: Installation
 
