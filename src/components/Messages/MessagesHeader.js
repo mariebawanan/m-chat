@@ -15,7 +15,7 @@ class MessagesHeader extends Component {
 
     return (
       <Segment clearing color={theme} inverted>
-        <Header inverted as="h2" floated="left">
+        <Header inverted as="h4" floated="left">
           {isPrivateChat ? '' : '# '}
           {chatName}
           {isPrivateChat ? (
@@ -27,7 +27,7 @@ class MessagesHeader extends Component {
                 ? ` ( ${numUniqueUsers} user${
                     numUniqueUsers > 1 ? 's )' : ' )'
                   }`
-                : '(no users)'}
+                : ' ( no users )'}
             </Header.Subheader>
           )}
         </Header>
@@ -35,7 +35,7 @@ class MessagesHeader extends Component {
         <Header floated="right">
           <Input
             inverted
-            size="small"
+            size="mini"
             icon="search"
             name="searchKeyword"
             placeholder="Seach Messages"

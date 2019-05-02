@@ -66,9 +66,14 @@ class MessageForm extends Component {
       .push()
       .set(this.createMessage(fileURL))
       .then(() => {
-        this.setState({
-          uploadState: 'done',
-        });
+        this.setState(
+          {
+            uploadState: 'done',
+          },
+          () => {
+            console.log('done');
+          },
+        );
       })
       .catch(error => {
         this.setState({
@@ -241,6 +246,14 @@ class MessageForm extends Component {
             style={{ position: 'absolute', bottom: '9vh' }}
           />
         )}
+
+        <ProgressBar
+          uploadState={uploadState}
+          percentUploaded={percentUploaded}
+          attached="top"
+          theme={theme}
+        />
+
         <Input
           type="text"
           placeholder="Start typing..."
@@ -290,13 +303,6 @@ class MessageForm extends Component {
             closeModal={this.closeModal}
           />
         </Input>
-
-        <ProgressBar
-          uploadState={uploadState}
-          percentUploaded={percentUploaded}
-          attached="bottom"
-          theme={theme}
-        />
       </>
     );
   }

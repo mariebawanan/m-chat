@@ -22,7 +22,7 @@ const Message = ({ message, user, theme }) => (
             </Feed.Label>
           )}
           <Feed.Content
-            style={{ fontSize: '1.25rem' }}
+            style={{ fontSize: '1rem' }}
             className={isOwnMessage(message, user) ? 'own' : ''}>
             <Feed.Summary>
               <Feed.User as="span">{message.user.name}</Feed.User>

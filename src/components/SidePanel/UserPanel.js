@@ -198,8 +198,8 @@ class UserPanel extends Component {
                         />
                         <Icon
                           name="circle"
-                          color="grey"
-                          onClick={() => this.handleTheme('grey')}
+                          color="brown"
+                          onClick={() => this.handleTheme('brown')}
                         />
                       </Comment.Action>
                     </Comment.Actions>
