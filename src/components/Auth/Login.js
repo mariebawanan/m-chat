@@ -7,7 +7,7 @@ import {
   Button,
   Header,
   Message,
-  Icon,
+  Image,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
@@ -65,12 +65,20 @@ class Login extends Component {
     const { email, password, errors, loading } = this.state;
     return (
       <Container>
+        <style>
+          {`
+            html, body {
+              background-color: #f2711c !important;
+            }
+          `}
+        </style>
         <Grid columns={2} centered stackable style={{ height: '100vh' }}>
-          <Grid.Column width={8} verticalAlign="middle">
-            <Header as="h2" color="orange">
-              <Icon name="user" />
-              Login to m-Chat
+          <Grid.Column verticalAlign="middle">
+            <Header style={{ fontSize: '100px', color: '#fff' }}>
+              log in.
             </Header>
+          </Grid.Column>
+          <Grid.Column width={8} verticalAlign="middle">
             <Form size="large" onSubmit={this.handleSubmit}>
               <Segment stacked>
                 <Form.Input

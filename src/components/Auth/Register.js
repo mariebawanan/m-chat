@@ -7,7 +7,6 @@ import {
   Button,
   Header,
   Message,
-  Icon,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import md5 from 'md5';
@@ -131,12 +130,20 @@ class Register extends Component {
     } = this.state;
     return (
       <Container>
+        <style>
+          {`
+            html, body {
+              background-color: #16ab39 !important;
+            }
+          `}
+        </style>
         <Grid columns={2} centered stackable style={{ height: '100vh' }}>
-          <Grid.Column width={8} verticalAlign="middle">
-            <Header as="h2" color="blue">
-              <Icon name="chat" />
-              Register to m-Chat
+          <Grid.Column verticalAlign="middle">
+            <Header style={{ fontSize: '100px', color: '#fff' }}>
+              register.
             </Header>
+          </Grid.Column>
+          <Grid.Column width={8} verticalAlign="middle">
             <Form size="large" onSubmit={this.handleSubmit}>
               <Segment stacked>
                 <Form.Input
@@ -194,7 +201,7 @@ class Register extends Component {
                 <Button
                   className={loading ? 'loading' : ''}
                   disabled={loading}
-                  color="blue"
+                  color="green"
                   fluid
                   size="large">
                   Submit
