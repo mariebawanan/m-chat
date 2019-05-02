@@ -3,18 +3,22 @@
   padding-bottom: 0px;
 }
 
-.ui.comments .comment .content {
-  font-size: 1.25rem;
-}
-
+/* App.js */
 .message-column {
   margin-left: 305px;
   padding-bottom: 0px !important;
 }
+
+/* Messages.js */
 .messages-panel {
   font-size: 1.5rem;
   height: 70vh;
   overflow-y: scroll;
+}
+
+/* Message.js */
+.ui.comments .comment .content {
+  font-size: 1.25rem;
 }
 
 .message-image {
@@ -25,23 +29,17 @@
   text-align: right !important;
 }
 
-.message-progress {
-  margin: 0.2em 0 !important;
-}
-
+/* GroupChats.js */
 .messages-list {
   padding-bottom: 2rem;
 }
 
-.message__form {
-  position: fixed !important;
-  bottom: 1em;
-  margin-left: 320px !important;
-  left: 0;
-  right: 1em;
-  z-index: 200;
+/* ProgressBar.js */
+.message-progress {
+  margin: 0.2em 0 !important;
 }
 
+/* Placeholder for Messa */
 .placeholder {
   position: relative;
   overflow: hidden;

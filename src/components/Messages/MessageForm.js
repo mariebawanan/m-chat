@@ -259,7 +259,7 @@ class MessageForm extends Component {
           placeholder="Start typing..."
           action
           fluid
-          size="huge"
+          size="large"
           name="message"
           disabled={chat ? false : true}
           value={message}

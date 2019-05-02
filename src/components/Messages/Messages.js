@@ -120,7 +120,7 @@ class Messages extends Component {
   displayTypingUsers = users =>
     users.length > 0 &&
     users.map(user => (
-      <div>
+      <div key={user.uid}>
         <span style={{ fontStyle: 'italic' }}> {user.name} is typing...</span>
       </div>
     ));

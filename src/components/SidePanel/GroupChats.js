@@ -117,7 +117,7 @@ class GroupChats extends Component {
     let count = 0;
     this.state.notifications.forEach(notification => {
       if (notification.id === chat.id) {
-        count = notification.counts;
+        count = notification.count;
       }
     });
 
@@ -165,11 +165,11 @@ class GroupChats extends Component {
   changeGroup = groupChat => {
     const { chat, user } = this.state;
     this.setActiveGroupChat(groupChat);
+    this.clearNotifications();
     firebaseTypingUsers
       .child(chat.id)
       .child(user.uid)
       .remove();
-    this.clearNotifications();
     this.props.setCurrentChat(groupChat);
     this.props.setPrivateChat(false);
     this.setState({ chat: groupChat });
@@ -185,7 +185,9 @@ class GroupChats extends Component {
         name={groupChat.name}
         active={groupChat.id === this.state.activeChat}>
         {this.getNotificationsCount(groupChat) && (
-          <Label color="green">{this.getNotificationsCount(groupChat)}</Label>
+          <Label color={this.props.theme}>
+            {this.getNotificationsCount(groupChat)}
+          </Label>
         )}
         # {groupChat.name}
       </Menu.Item>

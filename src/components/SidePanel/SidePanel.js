@@ -23,7 +23,7 @@ class SidePanel extends Component {
           <UserPanel currentUser={currentUser} />
         </Menu.Item>
 
-        <GroupChats currentUser={currentUser} />
+        <GroupChats theme={theme} currentUser={currentUser} />
         <PersonalMessages theme={theme} currentUser={currentUser} />
       </Menu>
     );
