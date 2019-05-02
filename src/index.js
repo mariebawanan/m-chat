@@ -9,7 +9,6 @@ import { setUser, clearUser, clearChat, clearTheme, setTheme } from './actions';
 import App from '../src/components/App/App';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
-import Spinner from './Spinner';
 
 import { firebase, firebaseUsers } from './firebase';
 
@@ -39,9 +38,7 @@ class Root extends Component {
   }
 
   render() {
-    return this.props.loading ? (
-      <Spinner />
-    ) : (
+    return (
       <Switch>
         <Route exact path="/login" component={Login} />
         <Route exact path="/register" component={Register} />
