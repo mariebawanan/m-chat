@@ -200,7 +200,7 @@ class GroupChats extends Component {
 
     // Obtain key for the new data to be pushed
     const key = firebaseGroupChats.push().key;
-
+    console.log(key);
     const chatData = {
       id: key,
       name: groupChatName,

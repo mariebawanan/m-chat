@@ -113,23 +113,19 @@ class UserPanel extends Component {
         photoURL: this.state.uploadedCroppedImage,
       })
       .then(() => {
-        console.log('PhotoURL updated');
         this.closeModal();
         this.setState({ uploading: false });
       })
       .catch(err => {
-        console.error(err);
+        console.error(err.message);
         this.setState({ uploading: false });
       });
 
     firebaseUsers
       .child(this.state.user.uid)
       .update({ avatar: this.state.uploadedCroppedImage })
-      .then(() => {
-        console.log('User avatar updated');
-      })
       .catch(err => {
-        console.error(err);
+        console.error(err.message);
       });
   };
 
@@ -147,7 +143,7 @@ class UserPanel extends Component {
                     <Comment.Author as="a">{user.displayName}</Comment.Author>
                     <Comment.Actions>
                       <Comment.Action onClick={this.openModal}>
-                        Change avatar{' '}
+                        Change avatar
                       </Comment.Action>
 
                       <Comment.Action onClick={this.handleSignOut}>

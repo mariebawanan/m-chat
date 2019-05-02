@@ -7,7 +7,6 @@ import {
   Button,
   Header,
   Message,
-  Image,
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 
@@ -46,7 +45,7 @@ class Login extends Component {
       firebase
         .auth()
         .signInWithEmailAndPassword(this.state.email, this.state.password)
-        .then(signedInUser => {
+        .then(() => {
           this.setState({ loading: false }, () => {
             this.props.history.push('/');
           });

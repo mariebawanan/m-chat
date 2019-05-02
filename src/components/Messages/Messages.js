@@ -228,6 +228,7 @@ class Messages extends Component {
       typingUsers,
       messagesLoading,
     } = this.state;
+
     return (
       <Segment style={{ height: '100vh', paddingBottom: '0px' }}>
         {chat && (

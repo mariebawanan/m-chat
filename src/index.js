@@ -48,13 +48,9 @@ class Root extends Component {
   }
 }
 
-const mapStateToProps = state => ({
-  loading: state.user.loading,
-});
-
 const RootWithAuth = withRouter(
   connect(
-    mapStateToProps,
+    null,
     { setUser, clearUser, clearChat, clearTheme, setTheme },
   )(Root),
 );

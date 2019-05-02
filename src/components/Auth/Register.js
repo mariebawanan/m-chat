@@ -87,8 +87,6 @@ class Register extends Component {
               )}?d=identicon`,
             })
             .then(() => {
-              // this.setState({ loading: false });
-              console.log(createdUser.user);
               this.props.setUser(createdUser.user);
               this.saveUser(createdUser).then(() => {
                 this.setState(
